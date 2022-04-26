@@ -1,0 +1,390 @@
+<div th:fragment="userInfo">
+<div class="userInfo" id="userInfo">
+    <div class="userNameAndHeadPic">
+        <div class="bigBox">
+            <div class="titleBig">
+                <div class="title_left headPic">
+                    <img th:src="@{img/test.jpg}" alt="" height="50px">
+                </div>
+                <div class="title_left headName">
+                    <span>用户</span><br>
+                    <span style="font-weight: normal;font-size: 13px">账户</span>
+                </div>
+                <div style="clear: both"></div>
+            </div>
+            <a>个人信息</a>
+            <a>收货地址</a>
+            <a>订单信息</a>
+        </div>
+    </div>
+    <div class="mainBody">
+        <div class="selectProductInfo">
+            <div>个人信息</div>
+            <div>已买商品</div>
+            <div>我的收藏</div>
+            <div>我的评价</div>
+            <div>我的足迹</div>
+            <div>收货地址</div>
+            <div>安全管理</div>
+        </div>
+        <div style="display: none" class="mainInfo">
+            <table class="table">
+                <tr>
+                    <th style="border-top:0">个人信息</th>
+                </tr>
+                <tr>
+                    <td>
+                        <table class="baseInfo">
+                            <tr>
+                                <td><span class="redColor">*&nbsp;</span>当前头像</td>
+                                <td class="content_center_row_left">
+                                    <div style="width: 60px;height: 60px;overflow: hidden">
+                                        <img height="60px" th:src="@{img/test.jpg}" alt="">
+                                    </div>
+                                    <input style="padding-left:20px" id="changeImg" type="file" typeof="*">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="redColor">*&nbsp;</span>昵称</td>
+                                <td>
+                                    <input type="text" class="form-control w_400" placeholder="Text input">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>真实姓名</td>
+                                <td>
+                                    <input type="text" class="form-control w_400" placeholder="Text input">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="redColor">*&nbsp;</span>性别</td>
+                                <td>
+                                    <label class="radio-inline">
+                                        <input type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1"> 男
+                                    </label>
+                                    <label class="radio-inline">
+                                        <input type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2"> 女
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>居住地</td>
+                                <td class="content_center_row_left">
+                                    <select class="form-control w_120">
+                                        <option>新疆维吾尔自治区</option>
+                                        <option>2</option>
+                                        <option>3</option>
+                                        <option>4</option>
+                                        <option>5</option>
+                                    </select>
+                                    <select class="form-control w_120">
+                                        <option>1</option>
+                                        <option>2</option>
+                                        <option>3</option>
+                                        <option>4</option>
+                                        <option>5</option>
+                                    </select>
+                                    <select class="form-control w_120">
+                                        <option>1</option>
+                                        <option>2</option>
+                                        <option>3</option>
+                                        <option>4</option>
+                                        <option>5</option>
+                                    </select>
+                                    <select class="form-control w_120">
+                                        <option>1</option>
+                                        <option>2</option>
+                                        <option>3</option>
+                                        <option>4</option>
+                                        <option>5</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>详细地址</td>
+                                <td>
+                                    <textarea class="form-control w_400" rows="3"></textarea>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <button style="margin-left:100px" type="button" class="btn btn-primary btn-sm active">点击保存</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div style="display: none" class="safeInfo">
+            <table class="table">
+                <tr>
+                    <th style="border-top:0">安全信息</th>
+                </tr>
+                <tr>
+                    <td>
+                        <table class="baseInfo safeModify">
+                            <tr>
+                                <td>登录用户名</td>
+                                <td colspan="2">缘起缘灭</td>
+                            </tr>
+                            <tr>
+                                <td>绑定手机</td>
+                                <td>130****6085</td>
+                                <td class="p_l_30"><a href="">修改手机号</a></td>
+                            </tr>
+                            <tr>
+                                <td>绑定邮箱</td>
+                                <td>2365417776@qq.com</td>
+                                <td class="p_l_30"><a href="">修改邮箱</a></td>
+                            </tr>
+                            <tr>
+                                <td>登录密码</td>
+                                <td>******</td>
+                                <td class="p_l_30">
+                                    <a href="">修改登录密码</a>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <button style="margin-left:100px" type="button" class="btn btn-primary btn-sm active">点击保存</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="addressInfo">
+            <div th:replace="staticPage/othersPage/addressInfoEdit"></div>
+            <div class="saveAddressTag content_left">
+                <i class="fa fa-exclamation-circle" style="color:#3bb3f1;font-size:18px "></i>
+                <span>&nbsp;&nbsp;已保存{{addresses.length}}条数据</span>
+            </div>
+            <table class="layui-table" style="margin-top:20px">
+                <colgroup>
+                    <col style="width: 60px;">
+                    <col style="width: 100px;">
+                    <col style="width: 150px;">
+                    <col style="width: 80px;">
+                    <col style="width: 100px;">
+                    <col style="width: 150px;">
+                </colgroup>
+                <thead>
+                <tr>
+                    <th>收货人</th>
+                    <th>具体地址</th>
+                    <th>详细地址</th>
+                    <th>邮编</th>
+                    <th>手机号</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="address in addresses">
+                    <td>{{address.consignee}}</td>
+                    <td>{{address.address}}</td>
+                    <td>{{address.detail}}</td>
+                    <td>{{address.post}}</td>
+                    <td>{{address.phone}}</td>
+                    <td>
+                        <a @click="modify(address.id)">修改</a>&nbsp;|
+                        <a @click="deleteAddress(address.id)">删除</a>&nbsp;|
+                        <button @click="setDefault(address.id)" v-if="address.status == 'normal'" class="layui-btn layui-btn-radius layui-btn-normal layui-btn-xs">设为默认</button>
+                        <span v-if="address.status == 'default'">默认地址</span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+        $(function(){
+            let dataVue = {
+                url:"getProvinces",
+                provinces:[],
+                cities:[],
+                counties:[],
+                towns:[],
+                address:{province:'', city:'', county:'',town:''},
+                detail:'',
+                consignee:'',
+                phone:'',
+                post:'',
+                addresses:'',
+                bean:[]
+            };
+            $(function(){
+                let vue = new Vue({
+                    el:"#userInfo",
+                    data:dataVue,
+                    mounted:function(){
+                        this.load();
+                    },
+                    watch:{
+                        'address.province':{
+                            handler:function(newVal, oldVal){
+                                let url = "getCityByProvince?provinceName="+newVal;
+                                axios.get(url).then(function(response){
+                                    vue.cities = response.data;
+                                });
+                                if(this.address.county){
+                                    vue.counties = null;
+                                    vue.towns = null;
+                                }
+                            }
+                        },
+                        'address.city':{
+                            handler:function(newVal, oldVal){
+                                let url = "getCountyByCity?cityName="+newVal;
+                                axios.get(url).then(function(response){
+                                    vue.counties = response.data;
+                                });
+                                if(this.address.county){
+                                    vue.towns = null;
+                                }
+                            }
+                        },
+                        'address.county':{
+                            handler:function(newVal, oldVal){
+                                let url = "getTownByCounty?countyName="+newVal;
+                                axios.get(url).then(function(response){
+                                    vue.towns = response.data;
+                                })
+                            }
+                        }
+                    },
+                    methods:{
+                        refreshAddress(){
+                            let url = "getAddress";
+                            axios.get(url).then(function(response){
+                                let result = response.data;
+                                if(result.code === 0){
+                                    vue.addresses = result.data;
+                                }else{
+                                    location = "login";
+                                }
+                            })
+                        },
+                        load:function(){
+                            let url = this.url;
+                            axios.get(url).then(function(response){
+                                vue.provinces = response.data;
+                            });
+                            this.refreshAddress();
+                        },
+                        submitAddress(){
+                            if(!checkEmpty(this.address.province, "具体地址"))
+                                return;
+                            if(!checkEmpty(this.detail, "详细地址"))
+                                return;
+                            if(!checkEmpty(this.consignee, "收货人"))
+                                return;
+                            if(!checkEmpty(this.phone, "手机号"))
+                                return;
+                            let selectAddress = this.address.province+" "+
+                                this.address.city+" "+this.address.county+" "
+                                +this.address.town;
+                            let status = "normal";
+                            let setDefault = $("#setDefault").prop("checked");
+                            if(setDefault){
+                                status = "default";
+                            }
+                            myAddress = {consignee:this.consignee,address:selectAddress,
+                                detail:this.detail, post:this.post, phone:this.phone, status:status};
+                            let url = "setAddress";
+                            axios.post(url, myAddress).then(function(response){
+                                if(response.data.code === 0){
+                                    vue.refreshAddress();
+                                }else
+                                    location.href = 'login';
+                            })
+                        },
+                        setDefault(addressId){
+                            let url = "setDefaultAddress?addressId="+addressId;
+                            axios.get(url).then(function(response){
+                                if(response.data.code === 1){
+                                    location.href = "login";
+                                }
+                                vue.refreshAddress();
+                            })
+                        },
+                        deleteAddress(addressId){
+                            if(!checkDeleteLink())
+                                return
+                            let url = "deleteAddress?addressId="+addressId;
+                            axios.get(url).then(function(){
+                                vue.refreshAddress();
+                            });
+                        },
+                        modify(addressId){
+                            $("#editAddress").modal("show");
+                            let url  = "getAddressById?addressId="+addressId;
+                            axios.get(url).then(function(response){
+                                vue.bean = response.data;
+                            })
+                        }
+                    }
+                })
+            })
+            $(function(){
+                let vue = new Vue({
+                    el:"#editAddress",
+                    data:dataVue,
+                    methods:{
+                        refreshAddress(){
+                            let url = "getAddress";
+                            axios.get(url).then(function(response){
+                                let result = response.data;
+                                if(result.code === 0){
+                                    vue.addresses = result.data;
+                                }else{
+                                    location = "login";
+                                }
+                            })
+                        },
+                        update(){
+                            if(!checkEmpty(this.bean.address, "具体地址"))
+                                return;
+                            if(!checkEmpty(this.bean.detail, "详细地址"))
+                                return;
+                            if(!checkEmpty(this.bean.consignee, "收货人"))
+                                return;
+                            if(!checkEmpty(this.bean.phone, "手机号"))
+                                return;
+                            let address = this.bean.address;
+                            if(this.address.province !== ''){
+                                address = '';
+                                address += (this.address.province + ' ');
+                            }
+                            if(this.address.city !== ''){
+                                address += (this.address.city + ' ');
+                            }
+                            if(this.address.county !== ''){
+                                address += (this.address.county + ' ');
+                            }
+                            if(this.address.town !== ''){
+                                address += (this.address.town);
+                            }
+                            this.bean.address = address;
+                            let url = "updateAddress";
+                            let setDefault = $("#setDefault2").prop("checked");
+                            if(setDefault){
+                                this.bean.status = "default";
+                            }else{
+                                this.bean.status = "normal";
+                            }
+                            let editAddress = $("#editAddress");
+                            axios.post(url, this.bean).then()
+                            editAddress.modal("hide");
+                            editAddress.on("hidden.bs.modal", function(){
+                                vue.refreshAddress();
+                            })
+                        }
+                    }
+                })
+            })
+        })
+    </script>
+</div>

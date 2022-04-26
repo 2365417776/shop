@@ -1,0 +1,18 @@
+<div th:fragment="register_page">
+    <div class="register_page content_center_row">
+        <div class="body center">
+            <div class="body_register content_right">
+                <div class="registerMethod">
+                    <div class="selectMethod center">
+                        <ul>
+                            <li id="email_select">用户名注册</li>
+                            <li id="phone_select">手机号注册</li>
+                        </ul>
+                    </div>
+                    <div th:replace="staticPage/othersPage/userRegister::userRegister"></div>
+                    <div th:replace="staticPage/othersPage/phoneRegister::phoneRegister"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

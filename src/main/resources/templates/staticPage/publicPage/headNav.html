@@ -1,0 +1,86 @@
+<div th:fragment="headNav">
+    <style>
+        .redColor{
+            color:#c40000 !important;
+        }
+        nav.top{
+            background: #f2f2f2;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #e7e7e7;
+        }
+        nav.top span, nav.top a{
+            color:#999;
+            margin:0 10px 0 10px;
+        }
+        nav.top a:hover{
+            color:#c40000;
+            text-decoration: none;
+        }
+    </style>
+    <nav class="top" id="HeadNav">
+<!--        拦截器定义的路径-->
+        <a th:href="${application.contextPath}">
+            <span class="glyphicon glyphicon-home redColor"></span>商城首页
+        </a>
+        <span>嗨，欢迎来这里</span>
+        <a href="login" style="cursor: pointer" v-if="result.code !== 0">请登录</a>
+        <a style="cursor: pointer" v-if="result.code === 0">{{user.name}}</a>
+        <a href="register" style="cursor: pointer" v-if="result.code !== 0">免费注册</a>
+        <a @click="exitLogin" style="cursor: pointer" v-if="result.code === 0">退出</a>
+        <span class="pull-right" style="margin-right:30px">
+        <a @click="toggleLoginModel();orderJump()" style="cursor: pointer" >我的订单</a>
+        <a @click="toggleLoginModel();cartJump()" style="cursor: pointer">
+            <span class="glyphicon glyphicon-shopping-cart redColor"></span>
+            购物车
+            <strong th:text="${session.cartTotalItemNumber}"></strong>
+            件
+        </a>
+    </span>
+    </nav>
+    <script>
+        $(function(){
+            let dataVue = {
+                url:"forecheckLogin",
+                result:[],
+                user:''
+            };
+            let vue = new Vue({
+                el:"#HeadNav",
+                data:dataVue,
+                mounted:function(){
+                    this.getLoginStatus();
+                },
+                methods:{
+                    getLoginStatus:function(){
+                        axios.get(this.url).then(function(response){
+                            vue.result = response.data;
+                            vue.user = vue.result.data;
+                        })
+                    },
+                    toggleLoginModel:function(){
+                        if(this.result.code === 1){
+                            $("#modal_login").modal("show")
+                        }
+                    },
+                    cartJump(){
+                        if(this.result.code === 0){
+                            location.href="cart"
+                        }
+                    },
+                    orderJump(){
+                        if(this.result.code === 0){
+                            location.href="myorder"
+                        }
+                    },
+                    exitLogin(){
+                        let url = "forelogout";
+                        axios.get(url).then(function(){
+                            location.reload();
+                        })
+                    }
+                }
+            });
+        })
+    </script>
+</div>

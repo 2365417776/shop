@@ -1,0 +1,80 @@
+<div th:fragment="searchBar">
+<style>
+    div.search{
+        width: 480px;
+        position:relative;
+        margin: 50px auto;
+    }
+    div.searchDiv{
+        background-color: #c40000;
+        width: 400px;
+        padding: 1px;
+        margin:0 0 0 auto;
+        height: 40px;
+        display: block;
+    }
+    div.searchDiv input{
+        width: 275px;
+        border:1px solid transparent;
+        height: 36px;
+        margin: 1px;
+        outline: none;
+    }
+    div.searchDiv button{
+        width: 110px;
+        border:1px solid transparent;
+        background-color: #c40000;
+        color: white;
+        font-size:20px;
+    }
+    div.searchBelow{
+        margin-top: 3px;
+        margin-left: -20px;
+    }
+    div.searchBelow span{
+        color: #999;
+    }
+    div.searchBelow a{
+        padding:0 20px;
+        font-size:14px;
+    }
+    img.logo{
+        position:absolute;
+        left:0;
+        top: -5px;
+        z-index: -1;
+        width: 60px;
+    }
+    a{
+        color: #999;
+    }
+    a:hover{
+        text-decoration: none;
+        color: #c40000;
+    }
+</style>
+<div>
+    <div class="search" id="searchMain">
+        <a th:href="${application.contextPath}">
+            <img class="logo" th:src="@{img/fix_bar/商城.svg}" alt="">
+        </a>
+        <div class="searchDiv">
+            <input type="text" placeholder="请点击搜索">
+            <button class="searchButton" type="submit">搜索</button>
+            <div class="searchBelow">
+                <span th:each="c,status:${application.categories_below_search}"
+                      th:if="${status.index >= 5 && status.index <= 8}">
+                    <a th:href="@{'category?cid='+${c.id}}" th:text="${c.name}"></a>
+                    <span th:if="${status.index != 8}">|</span>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+<div style="height: 50px"></div>
+    <script>
+        $(function(){
+
+        })
+    </script>
+</div>

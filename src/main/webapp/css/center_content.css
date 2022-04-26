@@ -1,0 +1,45 @@
+/*主要用来居中显示某些元素的样式表*/
+
+/*普通行居中*/
+.center{
+    display:flex;
+    justify-content:center;
+}
+.content_right{
+    display:flex;
+    justify-content:flex-end;
+    align-items:center;
+}
+/*一行元素居中显示*/
+.content_center_row{
+    display:flex;
+    flex-wrap: wrap;
+    justify-content:center;
+    flex-direction: row;
+}
+.content_center_row_left{
+    display:flex;
+    flex-wrap: wrap;
+    justify-content:flex-start;
+    flex-direction: row;
+    align-items:center;
+}
+/*一列元素居中显示*/
+.content_center_col{
+    display:flex;
+    flex-wrap: wrap;
+    justify-content:center;
+    flex-direction: column;
+}
+/*某个元素上下左右居中显示*/
+.content_center{
+    display: flex;
+    justify-content: center;
+    align-items:center;
+}
+/*一行元素靠左居中显示*/
+.content_left{
+    display:flex;
+    justify-content:flex-start;
+    align-items:center;
+}

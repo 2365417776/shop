@@ -1,0 +1,194 @@
+<div th:fragment="picture">
+    <div class="product_list">
+        <div class="product_main">
+            <div class="content" id="picture">
+                <div class="column_bar">
+                    <div class="bar_left">
+                        <span><i class="fa fa-flag"></i>&nbsp;图片管理</span>
+                        <span><button style="background: #917440" data-toggle="modal" data-target="#addPictureSingle">+新增单个图片</button></span>
+                        <span><button style="background: #998585" data-toggle="modal" data-target="#addPictureDetail">+新增详情图片</button></span>
+                    </div>
+                    <div class="bar_right">
+                        <span><i class="fa fa-home"></i>&nbsp;当前位置：</span>
+                        <span><a href="#">首页 >&nbsp;</a></span>
+                        <span><a href="index">分类管理 >&nbsp;</a></span>
+                        <span><a :href="productUrl" @click="positionUrl">{{category.name}}(产品管理) >&nbsp;</a></span>
+                        <span>{{product.name}}(图片管理)</span>
+                    </div>
+                </div>
+                <div style="clear:both"></div>
+                <div class="pictureManage" id="pictureManage">
+                    <div class="table_list picLeft" id="picChildren">
+                        <table>
+                            <tr>
+                                <th style="width: 50px">ID</th>
+                                <th style="width: 250px">产品单个图片缩略图</th>
+                                <th>操作</th>
+                            </tr>
+                            <tr v-for="pi in singleProductImages">
+                                <td>{{pi.id}}</td>
+                                <td><a title="点击查看原图" :href="'img/productSingle/' + pi.id + '.jpg'"><img :src="'img/productSingle/' + pi.id + '.jpg'" alt=""></a></td>
+                                <td>
+                                    <div class="option_category">
+                                        <a href="#" @click="deleteBean(pi.id)"><i title="删除" style="color:#dd514c" class="fa fa-trash-o fa-lg"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="table_list picRight">
+                        <table>
+                            <tr>
+                                <th style="width: 50px">ID</th>
+                                <th style="width: 250px">产品详情图片缩略图</th>
+                                <th>操作</th>
+                            </tr>
+                            <tr v-for="pi in detailProductImages">
+                                <td>{{pi.id}}</td>
+                                <td><a title="点击查看原图" :href="'img/productDetail/' + pi.id + '.jpg'"><img :src="'img/productDetail/' + pi.id + '.jpg'" alt=""></a></td>
+                                <td>
+                                    <div class="option_category">
+                                        <a href="#" @click="deleteBean(pi.id)"><i title="删除" style="color:#dd514c" class="fa fa-trash-o fa-lg"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <script>
+                    $('.picLeft').css('margin-left', '+' + $('.picLeft').width()/2 + 'px');
+                    $('.picRight').css('margin-right', '+' + $('.picRight').width()/2 + 'px')
+                </script>
+                <div class="page_attention">
+                    <div class="attention">注意事项：操作图标含义
+                        <span style="color:#dd514c" title="删除">删除&nbsp;<i class="fa fa-trash-o fa-lg"></i></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(function(){
+            let cid = getUrlParms("cid");
+            let pid = getUrlParms("pid");
+            let dataVue = {
+                url:'productImages',
+                singleProductImages:[],
+                detailProductImages:[],
+                product:[],
+                category:[],
+                singleFile:'',
+                detailFile:'',
+                productUrl:'index?page=include/back_stage_product&content=product',
+            }
+            $(function(){
+                let vue = new Vue({
+                    el:"#picture",
+                    data:dataVue,
+                    mounted:function(){
+                        if(pid === null)
+                            return;
+                        this.listSingles();
+                        this.listDetails();
+                        this.getProduct(pid);
+                    },
+                    methods:{
+                        positionUrl(){
+                            vue.productUrl = vue.productUrl +"&cid="+ cid;
+                        },
+                        getProduct:function(pid){
+                            let url = "products/" + pid;
+                            axios.get(url).then(function(response){
+                                vue.product = response.data;
+                                vue.category = vue.product.category;
+                            })
+                        },
+                        listSingles:function(){
+                            let url = this.url + "/" + pid + "/get?type=single";
+                            axios.get(url).then(function(response){
+                                vue.singleProductImages = response.data;
+                            })
+                        },
+                        listDetails:function(){
+                            let url = this.url + "/" + pid + "/get?type=detail";
+                            axios.get(url).then(function(response){
+                                vue.detailProductImages = response.data;
+                            })
+                        },
+                        deleteBean:function(id){
+                            if(!checkDeleteLink())
+                                return;
+                            let url = this.url + "/" + id;
+                            axios.delete(url).then(function(response){
+                                vue.listSingles();
+                                vue.listDetails();
+                            })
+                        }
+                    }
+                })
+            })
+            $(function(){
+                let vue = new Vue({
+                    el:"#addPictureSingle",
+                    data:dataVue,
+                    methods:{
+                        listSingles:function(){
+                            let url = this.url + "/" + pid + "/get?type=single";
+                            axios.get(url).then(function(response){
+                                vue.singleProductImages = response.data;
+                            })
+                        },
+                        addSingle:function(){
+                            if(!checkEmpty(this.singleFile, '单个产品图片'))
+                                return;
+                            let url = this.url + "?type=single&pid=" + pid;
+                            let formData = new FormData();
+                            formData.append("image", this.singleFile);
+
+                            axios.post(url,formData).then(function(){
+                                vue.listSingles();
+                                $("#addPictureSingle").modal("hide");
+                                $("#singlePic").val('');
+                                vue.singleFile = null;
+                            })
+                        },
+                        getSingleFile:function(event){
+                            this.singleFile = event.target.files[0];
+                        },
+                    }
+                })
+            })
+            $(function(){
+                let vue = new Vue({
+                    el:"#addPictureDetail",
+                    data:dataVue,
+                    methods:{
+                        listDetails:function(){
+                            let url = this.url + "/" + pid + "/get?type=detail";
+                            axios.get(url).then(function(response){
+                                vue.detailProductImages = response.data;
+                            })
+                        },
+                        addDetail:function(){
+                            if(!checkEmpty(this.detailFile, '详情产品图片'))
+                                return;
+                            let url = this.url + "?type=detail&pid=" + pid;
+                            let formData = new FormData();
+                            formData.append("image", this.detailFile);
+
+                            axios.post(url,formData).then(function(){
+                                vue.listDetails();
+                                $("#addPictureDetail").modal("hide");
+                                $("#detailPic").val('');
+                                vue.singleFile = null;
+                            })
+                        },
+                        getDetailFile:function(event){
+                            this.detailFile = event.target.files[0];
+                        }
+                    }
+                })
+            })
+        })
+    </script>
+</div>

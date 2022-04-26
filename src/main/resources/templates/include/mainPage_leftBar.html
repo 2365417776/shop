@@ -1,0 +1,40 @@
+<div th:fragment="mainBar">
+    <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+            <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+            <ul class="layui-nav layui-nav-tree"  lay-filter="test">
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a class="" href="javascript:;">所有商品</a>
+                    <dl class="layui-nav-child" id="selectPage">
+                        <dd><a href="index?page=include/back_stage_category&content=category">分类管理</a></dd>
+                        <dd><a href="index?page=include/back_stage_user&content=userList">用户管理</a></dd>
+                        <dd><a href="index?page=include/back_stage_order&content=order">订单管理</a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item">
+                    <a href="javascript:;">解决方案</a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="javascript:;">列表一</a></dd>
+                        <dd><a href="javascript:;">列表二</a></dd>
+                        <dd><a href="">超链接</a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item"><a href="">云市场</a></li>
+                <li class="layui-nav-item"><a href="">发布商品</a></li>
+            </ul>
+        </div>
+    </div>
+    <script>
+        $("#selectPage dd").removeClass("layui-this");
+        if(getUrlParms("content") === 'category' ||
+            getUrlParms("content") === 'property' ||
+            getUrlParms("content") === 'product' ||
+            getUrlParms("content") === 'picture' ||
+            getUrlParms("content") === 'propertyValue')
+            $("#selectPage dd:nth-child(1)").addClass("layui-this");
+        else if(getUrlParms("content") === 'userList')
+            $("#selectPage dd:nth-child(2)").addClass("layui-this");
+        else if(getUrlParms("content") === 'order')
+            $("#selectPage dd:nth-child(3)").addClass("layui-this");
+    </script>
+</div>

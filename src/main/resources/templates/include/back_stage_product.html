@@ -1,0 +1,225 @@
+<div th:fragment="product">
+    <div class="product_list">
+        <div class="product_main">
+            <div class="content" id="product">
+                <div class="column_bar">
+                    <div class="bar_left">
+                        <span><i class="fa fa-flag"></i>&nbsp;产品管理</span>
+                        <span><button data-toggle="modal" data-target="#addProduct">+新增产品</button></span>
+                    </div>
+                    <div class="bar_right">
+                        <span><i class="fa fa-home"></i>&nbsp;当前位置：</span>
+                        <span><a href="#">首页 >&nbsp;</a></span>
+                        <span><a href="index">分类管理 >&nbsp;</a></span>
+                        <span>{{category.name}}(产品管理)</span>
+                    </div>
+                </div>
+                <div class="table_list">
+                    <table>
+                        <tr>
+                            <th style="width: 50px">ID</th>
+                            <th style="width: 150px">图片</th>
+                            <th>产品名称</th>
+                            <th>产品小标题</th>
+                            <th style="width: 100px">原价格</th>
+                            <th style="width: 100px">优惠价格</th>
+                            <th style="width: 100px">库存数量</th>
+                            <th style="width: 183px;">操作</th>
+                        </tr>
+                        <tr v-for="bean in beans">
+                            <td>{{bean.id}}</td>
+                            <td><img v-if="bean.firstProductImage != null" width="40px" :src="'img/productSingle/' + bean.firstProductImage.id + '.jpg'" alt=""></td>
+                            <td>{{bean.name}}</td>
+                            <td>{{bean.subTitle}}</td>
+                            <td>{{bean.originalPrice}}</td>
+                            <td>{{bean.promotePrice}}</td>
+                            <td>{{bean.stock}}</td>
+                            <td>
+                                <div class="option_category">
+                                    <a href="#" @click="pictureManage(bean.id)"><i title="图片管理" style="color:#5eb85e" class="fa fa-picture-o fa-lg"></i></a>
+                                    <a href="#" @click="propertyValueEdit(bean.id)"><i title="设置属性" style="color:#3bb3f1" class="fa fa-list fa-lg"></i></a>
+                                    <a href="#" @click="editProperty(bean)" data-toggle="modal" data-target="#editProduct"><i title="编辑" style="color:#f27b1d" class="fa fa-pencil-square-o fa-lg"></i></a>
+                                    <a href="#" @click="deleteBean(bean.id)"><i title="删除" style="color:#dd514c" class="fa fa-trash-o fa-lg"></i></a>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="page_attention">
+                    <div class="dividePage">
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination">
+                                <li :class="{disabled:pagination.first}">
+                                    <a href="#" aria-label="Previous" @click="jump('first')">
+                                        <span aria-hidden="true">首页</span>
+                                    </a>
+                                </li>
+                                <li :class="{disabled: !pagination.hasPrevious}">
+                                    <a href="#" aria-label="Previous" @click="jump('pre')">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+
+                                <li v-for="i in pagination.navigatepageNums"><a href="#" @click="jumpByNumber(i-1)">{{i}}</a></li>
+
+                                <li :class="{disabled: !pagination.hasNext}">
+                                    <a href="#" aria-label="Next" @click="jump('next')">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                                <li :class="{disabled:pagination.last}">
+                                    <a href="#" aria-label="Next" @click="jump('last')">
+                                        <span aria-hidden="true">尾页</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <div class="attention">注意事项：操作图标含义
+                        <span style="color:#5eb85e" title="图片管理">图片管理&nbsp;<i class="fa fa-picture-o fa-lg"></i></span>&nbsp;
+                        <span style="color:#3bb3f1" title="设置属性">设置属性&nbsp;<i class="fa fa-list fa-lg"></i></span>&nbsp;
+                        <span style="color:#f27b1d" title="编辑">编辑&nbsp;<i class="fa fa-pencil-square-o fa-lg"></i></span>&nbsp;
+                        <span style="color:#dd514c" title="删除">删除&nbsp;<i class="fa fa-trash-o fa-lg"></i></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(function(){
+            let cid = getUrlParms("cid");
+            let dataVue = {
+                url:'products',
+                beans:[],
+                editProduct:[],
+                bean:{id:0, name:'', subTitle:'', originalPrice:99.98, promotePrice:19.8, stock:99, category:{id:0}},
+                pagination:{},
+                category:'',
+                pageContent:{page:"", content:""}
+            }
+            $(function(){
+                let vue = new Vue({
+                    el:"#product",
+                    data:dataVue,
+                    mounted:function(){
+                        if(cid === null)
+                            return;
+                        this.getCategory(cid);
+                        this.list(0);
+                    },
+                    methods:{
+                        // 产品图片管理
+                        pictureManage(id){
+                            vue.pageContent = {page:"include/back_stage_picture", content:"picture"};
+                            location.href = "index?page="+vue.pageContent.page+"&content="+vue.pageContent.content+"&cid="+cid+"&pid="+id;
+                        },
+                        editProperty(bean){
+                            vue.editProduct = bean;
+                        },
+                        propertyValueEdit(id){
+                            vue.pageContent = {page:"include/back_stage_propertyValue", content:"propertyValue"};
+                            location.href = "index?page="+vue.pageContent.page+"&content="+vue.pageContent.content+"&cid="+cid+"&pid="+id;
+                        },
+                        getCategory:function(cid){
+                            let url = "categories/" + cid;
+                            axios.get(url).then(function(response){
+                                vue.category = response.data;
+                            })
+                        },
+                        list:function(start){
+                            let url = this.url + "/" + cid + "/get" + "?start=" + start;
+                            axios.get(url).then(function(response){
+                                vue.pagination = response.data;
+                                vue.beans = response.data.content;
+                            })
+                        },
+                        jump(page){
+                            jump(page, vue);
+                        },
+                        jumpByNumber(start){
+                            jumpByNumber(start, vue);
+                        },
+                        deleteBean:function(id){
+                            if(!checkDeleteLink())
+                                return;
+                            let url = this.url + "/" + id;
+                            axios.delete(url).then(function(response){
+                                if(response.data.length !== 0)
+                                    alert(response.data);
+                                else
+                                    vue.list(0);
+                            })
+                        }
+                    }
+                })
+            })
+            $(function(){
+                let vue = new Vue({
+                    el:"#addProduct",
+                    data:dataVue,
+                    methods:{
+                        list:function(start){
+                            let url = this.url + "/" + cid + "/get" + "?start=" + start;
+                            axios.get(url).then(function(response){
+                                vue.pagination = response.data;
+                                vue.beans = response.data.content;
+                            })
+                        },
+                        add(){
+                            if(!checkEmpty(this.bean.name, "产品名称"))
+                                return;
+                            if(!checkEmpty(this.bean.subTitle, "小标题"))
+                                return;
+                            if(!checkEmpty(this.bean.originalPrice, "原价"))
+                                return;
+                            if(!checkEmpty(this.bean.promotePrice, "优惠价格"))
+                                return;
+                            if(!checkEmpty(this.bean.stock, "库存"))
+                                return;
+                            this.bean.category.id = cid;
+                            let url = this.url;
+                            axios.post(url, this.bean).then(function(response){
+                                vue.list(0);
+                                vue.bean = {id:0, name:'', subTitle:'', originalPrice:99.98, promotePrice:19.8, stock:99, category:{id:0}}
+                                $("#addProduct").modal("hide");
+                            })
+                        }
+                    }
+                })
+            })
+            $(function(){
+                let vue = new Vue({
+                    el:"#editProduct",
+                    data:dataVue,
+                    methods:{
+                        list:function(start){
+                            let url = this.url + "/" + cid + "/get" + "?start=" + start;
+                            axios.get(url).then(function(response){
+                                vue.pagination = response.data;
+                                vue.beans = response.data.content;
+                            })
+                        },
+                        update(){
+                            if(!checkEmpty(this.editProduct.name, "产品名称"))
+                                return;
+                            if(!checkEmpty(this.editProduct.subTitle, "小标题"))
+                                return;
+                            if(!checkEmpty(this.editProduct.originalPrice, "原价"))
+                                return;
+                            if(!checkEmpty(this.editProduct.promotePrice, "优惠价格"))
+                                return;
+                            if(!checkEmpty(this.editProduct.stock, "库存"))
+                                return;
+
+                            let url = this.url;
+                            axios.put(url, vue.editProduct).then(function(response){
+                                $("#editProduct").modal('hide');
+                                this.list(0);
+                            })
+                        }
+                    }
+                })
+            })
+        })
+    </script>
+</div>

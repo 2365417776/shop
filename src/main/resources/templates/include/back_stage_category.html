@@ -1,0 +1,214 @@
+<div th:fragment="category">
+<div class="product_list" id="category">
+    <div class="product_main">
+        <div class="content" >
+            <div class="column_bar">
+                <div class="bar_left">
+                    <span><i class="fa fa-flag"></i>&nbsp;分类管理</span>
+                    <span><button data-toggle="modal" data-target="#addCategory">+新增分类</button></span>
+                </div>
+                <div class="bar_right">
+                    <span><i class="fa fa-home"></i>&nbsp;当前位置：</span>
+                    <span>首页 >&nbsp;</span>
+                    <span>分类管理</span>
+                </div>
+            </div>
+            <div class="table_list">
+                <table style="margin:10px auto">
+                    <tr>
+                        <th style="width: 50px">ID</th>
+                        <th>图片</th>
+                        <th style="width: 100px">分类名称</th>
+                        <th style="width: 183px;">操作</th>
+                    </tr>
+                    <tr v-for="bean in beans">
+                        <td>{{bean.id}}</td>
+                        <td><img :src="'img/category/'+bean.id+'.jpg'" alt="" width="400px" height="40px" style="margin:5px 100px"></td>
+                        <td>{{bean.name}}</td>
+                        <td>
+                            <div class="option_category">
+                                <a href="#" @click="propertyManage(bean.id)"><i title="属性管理" style="color:#5eb85e" class="fa fa-list fa-lg"></i></a>
+                                <a href="#" @click="productManage(bean.id)"><i title="产品管理" style="color:#3bb3f1" class="fa fa-shopping-cart fa-lg"></i></a>
+                                <a href="#" @click="myBean(bean.id)" data-toggle="modal" data-target="#editCategory"><i title="编辑" style="color:#f27b1d" class="fa fa-pencil-square-o fa-lg"></i></a>
+                                <a href="#" @click="deleteBean(bean.id)"><i title="删除" style="color:#dd514c" class="fa fa-trash-o fa-lg"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="page_attention">
+                <div class="dividePage">
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination">
+                            <li :class="{disabled: pagination.first}">
+                                <a href="#nowhere" aria-label="Previous" @click="jump('first')">
+                                    <span aria-hidden="true">首页</span>
+                                </a>
+                            </li>
+                            <li :class="{disabled: !pagination.hasPrevious}">
+                                <a href="#nowhere" aria-label="Previous" @click="jump('pre')">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                            <li v-for="i in pagination.navigatepageNums"><a href="#nowhere" @click="jumpByNumber(i-1)">{{i}}</a></li>
+                            <li :class="{disabled: !pagination.hasNext}">
+                                <a href="#nowhere" aria-label="Next" @click="jump('next')">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                            <li :class="{disabled: pagination.last}">
+                                <a href="#nowhere" aria-label="Next" @click="jump('last')">
+                                    <span aria-hidden="true">尾页</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="attention">注意事项：操作图标含义
+                    <span style="color:#5eb85e" title="属性管理">属性管理&nbsp;<i class="fa fa-list fa-lg"></i></span>&nbsp;
+                    <span style="color:#3bb3f1" title="产品管理">产品管理&nbsp;<i class="fa fa-shopping-cart fa-lg"></i></span>&nbsp;
+                    <span style="color:#f27b1d" title="编辑">编辑&nbsp;<i class="fa fa-pencil-square-o fa-lg"></i></span>&nbsp;
+                    <span style="color:#dd514c" title="删除">删除&nbsp;<i class="fa fa-trash-o fa-lg"></i></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    <script>
+        $(function(){
+            let dataVue = {
+                url: 'categories',
+                pagination: {},
+                beans: [],
+                bean:{id:0, name:''},
+                file:null,
+                pageContent:{page:"", content:""},
+            }
+            $(function(){
+                let vue = new Vue({
+                    el: '#category',
+                    data: dataVue,
+                    methods: {
+                        myBean:function(id){
+                            let url = this.url + "/" + id;
+                            axios.get(url).then(function(response){
+                                vue.bean = response.data;
+                            })
+                        },
+                        propertyManage:function(id){
+                            vue.pageContent = {page:"include/back_stage_property", content:"property"};
+                            location.href = "index?page="+vue.pageContent.page+"&content="+vue.pageContent.content+"&cid="+id;
+                        },
+                        productManage:function(id){
+                            $(".mainDisplay").css("display", "none");
+                            vue.pageContent = {page:"include/back_stage_product", content:"product"};
+                            location.href = "index?page="+vue.pageContent.page+"&content="+vue.pageContent.content+"&cid="+id;
+                        },
+                        list: function (start) {
+                            let url = this.url + "?start=" + start;
+                            // 发送Ajax请求
+                            axios.get(url).then(function (response) {
+                                vue.pagination = response.data;
+                                vue.beans = response.data.content;
+                            })
+                        },
+                        jump: function (page) {
+                            jump(page, vue);
+                        },
+                        jumpByNumber: function (start) {
+                            jumpByNumber(start, vue);
+                        },
+                        deleteBean:function(id){
+                            if(!checkDeleteLink())
+                                return;
+                            let url = this.url + "/" + id;
+                            axios.delete(url).then(function(response){
+                                if(response.data.length !== 0){
+                                    alert(response.data);
+                                }
+                                else{
+                                    vue.list(0);
+                                }
+                            })
+                        }
+                    },
+                    mounted: function () {
+                        this.list(0);
+                    }
+                })
+            })
+            $(function(){
+                let vue = new Vue({
+                    el: '#addCategory',
+                    data: dataVue,
+                    mounted: function () {
+                        this.list(0);
+                    },
+                    methods: {
+                        list: function (start) {
+                            let url = this.url + "?start=" + start;
+                            // 发送Ajax请求
+                            axios.get(url).then(function (response) {
+                                vue.pagination = response.data;
+                                vue.beans = response.data.content;
+                            })
+                        },
+                        getFile:function(event){
+                            this.file = event.target.files[0];
+                        },
+                        add:function(){
+                            if(!checkEmpty(this.bean.name, "分类名称"))
+                                return;
+                            if(!checkEmpty(this.file, "分类图片"))
+                                return;
+                            let url = this.url;
+                            // 使用axios上传图片
+                            let formData = new FormData();
+                            formData.append("image", this.file);
+                            formData.append("name", this.bean.name)
+                            axios.post(url, formData).then(function(response){
+                                vue.list(0);
+                                // 上传完成后对相关数据重置
+                                vue.bean = {id:0, name:'', hp: '0'};
+                                $("#categoryPic").val('');
+                                vue.file = null;
+                            })
+                            $('#addCategory').modal('hide');
+                        }
+                    },
+                })
+            })
+            $(function(){
+                let vue = new Vue({
+                    el:"#editCategory",
+                    data:dataVue,
+                    methods:{
+                        list: function (start) {
+                            let url = this.url + "?start=" + start;
+                            // 发送Ajax请求
+                            axios.get(url).then(function (response) {
+                                vue.pagination = response.data;
+                                vue.beans = response.data.content;
+                            })
+                        },
+                        update:function(){
+                            if(!checkEmpty(this.bean.name, "分类名称"))
+                                return;
+                            let url = this.url + "/" + this.bean.id;
+                            let formData = new FormData();
+                            formData.append("image", this.file);
+                            formData.append("name", this.bean.name);
+                            axios.put(url, formData).then(function(response){
+                                $('#editCategory').modal('hide');
+                                this.list(0);
+                            })
+                        },
+                        getFile:function(event){
+                            this.file = event.target.files[0];
+                        }
+                    }
+                })
+            })
+        })
+    </script>
+</div>

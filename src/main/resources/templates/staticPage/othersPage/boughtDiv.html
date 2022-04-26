@@ -1,0 +1,154 @@
+<div th:fragment="myorder">
+    <div class="boughtDiv" id="boughtDiv">
+        <div class="orderType">
+            <div class="selectedOrderType"><a href="#nowhere" orderstatus="all">所有订单</a></div>
+            <div class=""><a href="#nowhere" orderstatus="waitPay">待付款</a></div>
+            <div class=""><a href="#nowhere" orderstatus="waitDelivery">待发货</a></div>
+            <div class=""><a href="#nowhere" orderstatus="waitConfirm">待收货</a></div>
+            <div class=""><a class="noRightborder" href="#nowhere" orderstatus="waitReview">待评价</a></div>
+            <div class="orderTypeLastOne"><a class="noRightborder"> </a></div>
+        </div>
+        <div style="clear:both"></div>
+        <div class="orderListTitle">
+            <table class="orderListTitleTable">
+                <tbody><tr>
+                    <td>宝贝</td>
+                    <td width="100px">单价</td>
+                    <td width="100px">数量</td>
+                    <td width="120px">实付款</td>
+                    <td width="100px">交易操作</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="orderListItem">
+            <table v-for="o in orders" :oid="o.id" :orderstatus="o.status" class="orderListItemTable" style="display: table;">
+                <tbody>
+                <tr class="orderListItemFirstTR">
+                    <td colspan="2">
+                        <b>{{o.createDate | formatDateFilter}}</b>
+                        <span>订单号: {{o.orderCode}}</span>
+                    </td>
+                    <td colspan="2">
+                        <img width="13px" src="https://how2j.cn/tmall/img/site/orderItemTmall.png">我的商场
+                    </td>
+                    <td colspan="1">
+                        <a href="#nowhere" class="wangwanglink">
+                            <div class="orderItemWangWangGif"></div>
+                        </a>
+                    </td>
+                    <td class="orderItemDeleteTD">
+                        <a href="#nowhere" :oid="o.id" class="deleteOrderLink">
+                            <span class="orderListItemDelete glyphicon glyphicon-trash"></span>
+                        </a>
+                    </td>
+                </tr>
+                <tr class="orderItemProductInfoPartTR" v-for="oi,index in o.orderItemList">
+                    <td class="orderItemProductInfoPartTD">
+                        <img width="80" height="80" :src="'img/productSingle_middle/'+oi.product.firstProductImage.id+'.jpg'">
+                    </td>
+                    <td class="orderItemProductInfoPartTD">
+                        <div class="orderListItemProductLinkOutDiv">
+                            <a :href="'product?pid='+oi.product.id">{{oi.product.name}}</a>
+                            <div class="orderListItemProductLinkInnerDiv">
+                                <img title="支持信用卡支付" src="https://how2j.cn/tmall/img/site/creditcard.png">
+                                <img title="消费者保障服务,承诺7天退货" src="https://how2j.cn/tmall/img/site/7day.png">
+                                <img title="消费者保障服务,承诺如实描述" src="https://how2j.cn/tmall/img/site/promise.png">
+                            </div>
+                        </div>
+                    </td>
+                    <td width="100px" class="orderItemProductInfoPartTD">
+                        <div class="orderListItemProductOriginalPrice">￥{{oi.product.originalPrice|formatMoneyFilter}}</div>
+                        <div class="orderListItemProductPrice">￥{{oi.product.promotePrice|formatMoneyFilter}}</div>
+                    </td>
+                    <template v-if="index == 0">
+                        <td width="100px" valign="top" class="orderListItemNumberTD orderItemOrderInfoPartTD" :rowspan="o.orderItemList.length">
+                            <span class="orderListItemNumber">{{o.totalNumber}}</span>
+                        </td>
+                        <td width="120px" valign="top" class="orderListItemProductRealPriceTD orderItemOrderInfoPartTD" :rowspan="o.orderItemList.length">
+                            <div class="orderListItemProductRealPrice">￥{{o.total|formatMoneyFilter}}</div>
+                            <div class="orderListItemPriceWithTransport">(含运费：￥0.00)</div>
+                        </td>
+                        <td width="100px" valign="top" class="orderListItemButtonTD orderItemOrderInfoPartTD" :rowspan="o.orderItemList.length">
+                            <a v-if="o.status=='waitConfirm'" :href="'confirmReceive?oid='+o.id">
+                                <button class="orderListItemConfirm">确认收货</button>
+                            </a>
+                            <a v-if="o.status=='waitPay'" :href="'alipay?oid='+o.id+'&total='+o.total">
+                                <button class="orderListItemConfirm">付款</button>
+                            </a>
+                            <div v-if="o.status=='waitDelivery'">
+                                <span>待发货</span>
+                            </div>
+                            <a v-if="o.status=='waitReview'" :href="'review?oid='+o.id">
+                                <button class="orderListItemReview">评价</button>
+                            </a>
+                        </td>
+                    </template>
+                </tr>
+                </tbody></table>
+        </div>
+    </div>
+    <script>
+        $(function(){
+            let dataVue = {
+                url:'forebought',
+                orders:[]
+            };
+            let vue = new Vue({
+                el:"#boughtDiv",
+                data:dataVue,
+                mounted:function(){
+                    this.load();
+                },
+                methods:{
+                    load:function(){
+                        let url = this.url;
+                        axios.get(url).then(function(response){
+                            vue.orders = response.data;
+                            vue.$nextTick(function(){
+                                orderPageRegisterListeners();
+                            })
+                        })
+                    }
+                }
+            })
+        })
+        let deleteOrder = false;
+        let deleteOrderId = 0;
+        function orderPageRegisterListeners(){
+            $("a[orderStatus]").click(function(){
+                let orderStatus = $(this).attr("orderStatus");
+                if('all' === orderStatus){
+                    $("table[orderStatus]").show();
+                }
+                else{
+                    $("table[orderStatus]").hide();
+                    $("table[orderStatus="+orderStatus+"]").show();
+                }
+                $("div.orderType div").removeClass("selectedOrderType");
+                $(this).parent("div").addClass("selectedOrderType");
+            });
+            $("a.deleteOrderLink").click(function(){
+                deleteOrderId = $(this).attr("oid");
+                deleteOrder = false;
+                $("#modal_delete").modal("show");
+            });
+            $("button.deleteConfirmButton").click(function(){
+                deleteOrder = true;
+                $("#modal_delete").modal('hide');
+            });
+            $('#modal_delete').on('hidden.bs.modal', function (e) {
+                if(deleteOrder){
+                    let url = "foredeleteOrder?oid="+deleteOrderId;
+                    axios.put(url).then(function(response){
+                        if(response.data.code === 0){
+                            $("table.orderListItemTable[oid="+deleteOrderId+"]").hide();
+                        }else{
+                            location.href = "login";
+                        }
+                    })
+                }
+            })
+        }
+    </script>
+</div>

@@ -1,0 +1,76 @@
+<div th:fragment="addressInfoEdit">
+<table class="table">
+    <tr>
+        <th style="border-top:0">收货地址</th>
+    </tr>
+    <tr>
+        <td>
+            <table class="baseInfo">
+                <tr>
+                    <td colspan="2" style="color:#f27b1d;font-weight: bold">新增收货地址</td>
+                </tr>
+                <tr>
+                    <td><span class="redColor">*&nbsp;</span>地址信息</td>
+                    <td class="content_center_row_left">
+                        <select v-model="address.province" class="form-control w_120">
+                            <option value="">选择省</option>
+                            <option v-for="p in provinces">{{p.name}}</option>
+                        </select>
+                        <select v-model="address.city" class="form-control w_120">
+                            <option value="">选择市</option>
+                            <option v-for="c in cities">{{c.name}}</option>
+                        </select>
+                        <select v-model="address.county" class="form-control w_120">
+                            <option value="">选择区/县</option>
+                            <option v-for="ct in counties">{{ct.name}}</option>
+                        </select>
+                        <select v-model="address.town" class="form-control w_120">
+                            <option value="">选择城镇/街道</option>
+                            <option v-for="t in towns">{{t.name}}</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td><span class="redColor">*&nbsp;</span>详细地址</td>
+                    <td>
+                        <textarea v-model="detail" class="form-control w_400" rows="3"></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td>邮政编码</td>
+                    <td>
+                        <input v-model="post" type="text" class="form-control w_400" placeholder="邮政编码">
+                    </td>
+                </tr>
+                <tr>
+                    <td><span class="redColor">*&nbsp;</span>收货人姓名</td>
+                    <td>
+                        <input v-model="consignee" type="text" class="form-control w_400" placeholder="收货人姓名">
+                    </td>
+                </tr>
+                <tr>
+                    <td><span  class="redColor">*&nbsp;</span>手机号</td>
+                    <td>
+                        <input v-model="phone" type="text" class="form-control w_400" placeholder="输入手机号">
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <div class="checkbox">
+                            <label>
+                                <input id="setDefault" type="checkbox"> 设置为默认地址
+                            </label>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <button @click="submitAddress" style="margin-left:100px" type="button" class="btn btn-primary btn-sm active">点击保存</button>
+        </td>
+    </tr>
+</table>
+</div>

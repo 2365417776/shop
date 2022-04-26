@@ -1,0 +1,118 @@
+<div th:fragment="fix_bar">
+    <style>
+        /*右边固定栏*/
+        .right_fix{
+            margin:0;
+            padding-top:30px;
+            position:fixed;
+            top:0;
+            right:0;
+            box-sizing: border-box;
+            width: 30px;
+            height: 100%;
+            background: #000000
+        }
+        .right_fix .vertical_menu_top,.vertical_menu_bottom{
+            color:red;
+            list-style:none;
+            width: 30px;
+            background: #000;
+        }
+        .right_fix img{
+            width: 20px;
+            padding:10px 0;
+        }
+        .right_fix .vertical_menu_top .cargo .txt .num{
+            writing-mode: vertical-rl;
+            display: inline-block;
+            line-height: 20px;
+        }
+        .right_fix .vertical_menu_top>li,.vertical_menu_bottom>li{
+            padding:0 5px;
+        }
+        .right_fix .vertical_menu_bottom{
+            position:absolute;
+            bottom:0;
+        }
+        .right_fix .vertical_menu_bottom>li:hover,.vertical_menu_top>li:hover{
+            background: yellow;
+            cursor: pointer;
+        }
+        div.right_fix div.floatInfo{
+            width: 50px;
+            height: 20px;
+            /*background: #238ec5;*/
+            position:absolute;
+            top:0;
+            right:0;
+        }
+    </style>
+    <div class="right_fix" id="right_fix">
+        <ul class="vertical_menu_top">
+            <li @click="toggleLoginModel();user()"><img th:src="@{img/fix_bar/个人用户.svg}" alt=""></li>
+            <li class="cargo" @click="toggleLoginModel();cart()">
+                <img th:src="@{img/fix_bar/购物车.svg}" alt="">
+                <div class="txt">
+                    <span class="num">购物车</span>
+                    <span class="badge" style="background: #ff3d29;" th:text="${session.cartTotalItemNumber}"></span>
+                </div>
+            </li>
+            <li><img th:src="@{img/fix_bar/钱包.svg}" alt=""></li>
+            <li><img th:src="@{img/fix_bar/足迹.svg}" alt=""></li>
+            <li><img th:src="@{img/fix_bar/收藏1.svg}" alt=""></li>
+            <li><img th:src="@{img/fix_bar/充值.svg}" alt=""></li>
+        </ul>
+        <ul class="vertical_menu_bottom">
+            <li><img th:src="@{img/fix_bar/客服.svg}" alt=""></li>
+            <li><img th:src="@{img/fix_bar/二维码.svg}" alt=""></li>
+            <li @click="goTop"><img th:src="@{img/fix_bar/顶部.svg}" alt=""></li>
+        </ul>
+        <div class="floatInfo"></div>
+    </div>
+    <script>
+        // 右边固定栏
+        $(function(){
+            let vueData = {
+                url:"forecheckLogin",
+                result:[],
+            };
+
+            $(function(){
+                let vue = new Vue({
+                    el:"#right_fix",
+                    data:vueData,
+                    mounted:function (){
+                      this.getLoginStatus();
+                    },
+                    methods:{
+                        goTop(){
+                            $('body,html').animate({
+                                scrollTop: 0
+                            },200);
+                        },
+                        getLoginStatus:function(){
+                            axios.get(this.url).then(function(response){
+                                vue.result = response.data;
+                            })
+                        },
+                        toggleLoginModel(){
+                            if(this.result.code === 1){
+                                $("#modal_login").modal("show");
+                            }
+                        },
+                        cart(){
+                            if(this.result.code === 0){
+                                location.href = "cart";
+                            }
+                        },
+                        user(){
+                            if(this.result.code === 0){
+                                location.href = "userInfo";
+                            }
+                        }
+                    }
+                })
+            })
+        })
+    </script>
+</div>

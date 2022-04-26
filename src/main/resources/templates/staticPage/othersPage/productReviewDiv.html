@@ -1,0 +1,20 @@
+<div th:fragment="productReviewDiv">
+    <div class="productReviewDiv" style="display: block;">
+        <div class="productReviewTopPart">
+            <a class="productReviewTopPartSelectedLink" @click="toggleDetail">商品详情</a>
+            <a class="selected">累计评价 <span class="productReviewTopReviewLinkNumber">{{p.reviewCount}}</span> </a>
+        </div>
+        <div class="productReviewContentPart" v-for="r in reviews">
+            <div class="productReviewItem">
+                <div class="productReviewItemDesc">
+                    <div class="productReviewItemContent">{{r.content}}</div>
+                    <div class="productReviewItemDate">{{r.createDate | formatDateFilter('YYYY-MM-DD')}}</div>
+                </div>
+                <div class="productReviewItemUserInfo">
+                    {{r.user.anonymousName}}<span class="userInfoGrayPart">（匿名）</span>
+                </div>
+                <div style="clear:both"></div>
+            </div>
+        </div>
+    </div>
+</div>

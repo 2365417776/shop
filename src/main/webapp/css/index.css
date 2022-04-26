@@ -1,0 +1,163 @@
+div.layui-footer{
+    background-color: #5b6e84 !important;
+    text-align: center;
+}
+/*产品列表展示css代码*/
+.product_list .product_main{
+    position:absolute;
+    top:0;
+    right:0;
+    left:0;
+}
+.layui-body{
+    border: 13px solid #f0f1f6;
+    border-bottom-color: transparent;
+}
+.layui-body .mainDisplay{
+    padding: 15px;
+}
+.product_list .product_main .content{
+    background: white;
+    padding:10px;
+}
+.product_list .product_main .content .column_bar{
+    height: 34px;
+    line-height: 34px;
+}
+.product_list .product_main .content .column_bar:after{
+    content:'';
+    display: block;
+    height:0;
+    visibility: hidden;
+    clear:both;
+}
+.product_list .product_main .content .column_bar .bar_left{
+    float:left;
+    margin-left: 16px;
+}
+.product_list .product_main .content .column_bar .bar_left span:nth-child(1){
+    font:bold 15px "微软雅黑";
+    color: #8b8888;
+    line-height: 34px;
+    margin-right: 34px;
+}
+.product_list .product_main .content .column_bar .bar_left span:nth-child(2) button{
+    margin-right: 20px;
+}
+.product_list .product_main .content .column_bar .bar_left span:nth-child(2) button, span:nth-child(3) button{
+    background: #dc514c;
+    color:white;
+    font:bold 13px "微软雅黑";
+    padding:3px 12px;
+    line-height: 16px;
+    border-radius: 13px;
+}
+.product_list .product_main .content .column_bar .bar_right .fa-home{
+    margin-right: 2px;
+}
+.product_list .product_main .content .column_bar .bar_right{
+    position:absolute;
+    right:25px;
+    color: #8b8888;
+}
+.product_list .product_main .content .column_bar .bar_right a{
+    color: #5959c2;
+}
+.product_list .product_main .content .column_bar .bar_right a:hover{
+    color: #c77d7a;
+}
+.product_list .product_main .content .column_bar{
+    margin:0 10px 0 0;
+}
+.product_list .product_main .content div.pictureManage img{
+    width: 150px;
+    margin:10px auto;
+}
+.product_list .product_main .content div.pictureManage:after{
+    content:'';
+    display: block;
+    clear:both;
+}
+.product_list .product_main .content div.pictureManage div.picLeft{
+    float:left;
+}
+.product_list .product_main .content div.pictureManage div.picRight{
+    float:right;
+}
+.product_list .product_main .content .table_list table{
+    text-align: center;
+    border-collapse: collapse;
+    border-spacing: 0;
+    margin-top: 13px;
+}
+.product_list .product_main .content .table_list table tr{
+    background: #f0f1f6;
+}
+.product_list .product_main .content .table_list table tr:hover{
+    background: #ddd;
+}
+.product_list .product_main .content .table_list table tr th{
+    height:35px;
+    font:bold 15px "微软雅黑";
+    background: #f0f1f6;
+    border: 1px solid #dcdcdc;
+    color:#5eb95e;
+    text-align: center;
+}
+.product_list .product_main .content .table_list table tr td{
+    color: rgba(8, 21, 8, 0.92);
+    font:13px "微软雅黑";
+    border: 1px solid #dcdcdc;
+}
+.product_list .product_main .content .table_list div.option_category i{
+    width: 38px;
+    height: 25px;
+    border-right:1px solid #e3d7d7;
+    line-height: 25px;
+    float:left;
+}
+.product_list .product_main .content .table_list div.option_category i:hover{
+    color: #262424 !important;
+    background: #ddd;
+}
+.product_list .product_main .content .table_list div.option_category i:first-child{
+    border-left:none ;
+}
+.product_list .product_main .content .table_list div.option_category i:last-child{
+    border-right:none ;
+}
+.product_list .product_main .content .table_list div.option_category{
+    border-radius: 25px;
+    background: #fdfdfe;
+    margin:5px 15px;
+    overflow: hidden;
+}
+.product_list .product_main .content .table_list div.orderPageOrderItem table.orderPageOrderItemTable tr{
+    background: none;
+}
+.product_list .product_main .content .table_list div.orderPageOrderItem table.orderPageOrderItemTable tr td{
+    border:none;
+}
+.product_list .product_main .content .page_attention{
+    padding-bottom: 20px;
+    overflow: hidden;
+}
+.product_list .product_main .content .page_attention div.dividePage{
+    float:right;
+}
+.product_list .product_main .content .page_attention div.attention{
+    font:14px "微软雅黑";
+    line-height: 78px;
+    float:left;
+}
+.product_list .product_main .content .page_attention .attention>span:hover{
+    cursor: pointer;
+}
+div.modal-header{
+    background: #fdfdfe !important;
+    color: #2f2712;
+    text-align: center;
+}
+div.modal-body{
+    background: #f7f7f7;
+}

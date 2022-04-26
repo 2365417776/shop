@@ -1,0 +1,113 @@
+<div th:fragment="modal_login">
+    <div class="modal fade" id="modal_login" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h3 class="modal-title" id="exampleModalLabel">账户登录</h3>
+                </div>
+                <div class="modal-body" style="padding:10px 20px 40px 20px">
+                    <div class="input-group" style="margin-top:10px">
+                        <span class="input-group-addon" id="user"><i class="glyphicon glyphicon-user"></i></span>
+                        <input v-model="user.name" type="text" class="form-control" placeholder="邮箱或手机号或用户名" aria-describedby="user">
+                    </div>
+                    <div class="input-group" style="margin:20px 0 10px 0">
+                        <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+                        <input v-model="user.password" type="password" placeholder="请输入密码" class="form-control inputPwd" aria-label="Amount (to the nearest dollar)">
+                        <span class="input-group-addon" @mousedown="openEye" @mouseup="closeEye"><i class="eye glyphicon glyphicon-eye-close"></i></span>
+                    </div>
+                    <div id="errorMessage" style="text-align:center;color:#843534;font-weight: 700;background: #f1dddd;padding:4px;border-radius: 5px">错误</div>
+                    <div class="checkbox" style="line-height: 20px">
+                        <label>
+                            <input type="checkbox"> 记住密码
+                        </label>
+                    </div>
+                    <button @click="login" style="width: 100%;" class="submit layui-btn layui-btn-radius" type="submit">点击登录</button>
+
+                    <div class="forget_register" style="margin-bottom: 10px">
+                        <div class="forget_pwd"><a href="">忘记密码</a></div>
+                        <div class="register"><a href="register">点击注册</a></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        //登录与后台
+        $(function(){
+            let dataVue = {
+                url:'forelogin',
+                result:[],
+                user:{name:'', password:''}
+            };
+            $(function(){
+                let vue = new Vue({
+                    el:"#modal_login",
+                    data:dataVue,
+                    mounted:function(){
+                        $("#errorMessage").hide();
+                    },
+                    watch:{
+                        'user.name':{
+                            handler:function(){
+                                $("#errorMessage").hide();
+                            }
+                        },
+                        'user.password':{
+                            handler:function(){
+                                $("#errorMessage").hide();
+                            }
+                        }
+                    },
+                    methods:{
+                        login:function(){
+                            let errorMessage = $("#errorMessage");
+                            errorMessage.hide();
+                            let url = this.url;
+                            if(this.user.name.length === 0){
+                                errorMessage.html("请输入用户名");
+                                errorMessage.show();
+                                return
+                            }
+                            if(this.user.password.length === 0){
+                                errorMessage.html("请输入登录密码");
+                                errorMessage.show();
+                                return
+                            }
+                            axios.post(url, this.user).then(function(response){
+                                vue.result = response.data;
+                                if(response.data.code === 0){
+                                    location.reload();
+                                }
+                                else{
+                                    errorMessage.html(response.data.message);
+                                    errorMessage.show();
+                                }
+                            })
+                        },
+                        openEye:function(){
+                            let eye = $(".eye");
+                            let inputPwd = $(".inputPwd");
+                            $.each(eye, function(index, value){
+                                if($(value).attr("class") === 'eye glyphicon glyphicon-eye-close'){
+                                    $(value).attr("class", "eye glyphicon glyphicon-eye-open")
+                                    inputPwd.attr("type", "text")
+                                }
+                            })
+                        },
+                        closeEye:function(){
+                            let eye = $(".eye");
+                            let inputPwd = $(".inputPwd");
+                            $.each(eye, function(index, value){
+                                if($(value).attr("class") === 'eye glyphicon glyphicon-eye-open'){
+                                    $(value).attr("class", "eye glyphicon glyphicon-eye-close")
+                                    inputPwd.attr("type", "password")
+                                }
+                            })
+                        }
+                    }
+                })
+            })
+        })
+    </script>
+</div>

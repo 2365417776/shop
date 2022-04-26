@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:include="include/lib::html"></head>
+<body>
+<div th:replace="staticPage/publicPage/headNav::headNav"></div>
+<div th:replace="staticPage/publicPage/simpleSearchBar::simpleSearchBar"></div>
+<div th:replace="staticPage/othersPage/cartDiv::cart"></div>
+<div th:replace="staticPage/publicPage/pageFooter_1::pageFooter"></div>
+<div th:replace="staticPage/publicPage/pageFooter_2::pageFooter"></div>
+<div th:replace="staticPage/publicPage/fix_bar::fix_bar"></div>
+<!--登录模态框-->
+<div th:replace="staticPage/othersPage/model_login::modal_login"></div>
+<!--确认删除模态框-->
+<div th:replace="staticPage/othersPage/model_delete::confirmDelete"></div>
+</body>
+</html>

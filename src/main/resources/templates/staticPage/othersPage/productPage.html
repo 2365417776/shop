@@ -1,0 +1,124 @@
+<div th:fragment="productPage">
+    <div id="productPage">
+        <title>{{p.name}}</title>
+        <div class="categoryPictureInProductPageDiv" style="text-align: center;margin-bottom: 20px">
+            <img v-if="category != null" class="categoryPictureInProductPage"
+                 :src="'img/category/'+category.id+'.jpg'" alt="">
+        </div>
+        <div class="productPageDiv">
+            <div th:replace="staticPage/othersPage/imgAndInfo::imgAndInfo"></div>
+            <div th:replace="staticPage/othersPage/productDetailDiv::productDetailDiv"></div>
+            <div th:replace="staticPage/othersPage/productReviewDiv::productReviewDiv"></div>
+        </div>
+    </div>
+    <script>
+        $(function(){
+            let pid = getUrlParms("pid");
+            let dataVue = {
+                url:'foreproduct',
+                url2:"forecheckLogin",
+                url3:"getCartStatus",
+                url4:"setCartStatus",
+                result:[],
+                p:'',
+                category:null,
+                firstProductImage:null,
+                pvs:[],
+                reviews:[],
+                showDetail:true,
+                showReview:false,
+                user:{name:'', password:''},
+                cartStatus:null
+            };
+            let vue = new Vue({
+                el:"#productPage",
+                data:dataVue,
+                mounted:function(){
+                    this.load();
+                    this.getLoginStatus();
+                },
+                methods:{
+                    load:function(){
+                        let url = this.url + "/" + pid;
+                        axios.get(url).then(function(response){
+                            let result = response.data;
+                            vue.p = result.data.product;
+                            vue.pvs = result.data.pvs;
+                            vue.reviews = result.data.reviews;
+
+                            vue.category = vue.p.category;
+                            vue.firstProductImage = vue.p.firstProductImage;
+                            vue.$nextTick(function(){
+                                imgAndInfoPageRegisterListeners(vue);
+                            })
+                        });
+                        let url2 = this.url3 + "?pid=" + pid;
+                        axios.get(url2).then(function(response){
+                            vue.cartStatus = response.data;
+                            if(vue.cartStatus){
+                                vue.cartChange()
+                            }
+                        });
+                    },
+                    toggleDetail:function(){
+                        this.showDetail=true;
+                        this.showReview=false;
+                    },
+                    toggleReview:function(){
+                        this.showDetail=false;
+                        this.showReview=true;
+                    },
+                    getLoginStatus:function(){
+                        axios.get(this.url2).then(function(response){
+                            vue.result = response.data;
+                        })
+                    },
+                    immediateBuy:function(){
+                        if(this.result.code === 1){
+                            $("#modal_login").modal("show")
+                        }
+                        else{
+                            let pid = this.p.id;
+                            let num = $(".productNumberSetting").val();
+                            let url = "forebuyone?pid="+pid+"&num="+num;
+                            axios.get(url).then(function(response){
+                                let oiid = response.data;
+                                location.href = "settleOrder?oiid=" + oiid;
+                            })
+                        }
+                    },
+                    addCart:function(){
+                        if(this.result.code === 1){
+                            $("#modal_login").modal("show")
+                        }
+                        else{
+                            let url = this.url4 + "?pid=" + pid;
+                            axios.get(url).then(function(response){
+                                let result = response.data;
+                                if(result.data.status === 1){
+                                    vue.cartStatus = true;
+                                }
+                            });
+                            let num = $(".productNumberSetting").val();
+                            let url2 = "foreaddCart?pid="+pid+"&num="+num;
+                            axios.get(url2).then(function(response){
+                                let result = response.data;
+                                if(result.code === 0){
+                                    vue.cartChange();
+                                }
+                            })
+                        }
+                    },
+                    cartChange(){
+                        let addCartButton = $(".addCartButton");
+                        addCartButton.html("已加入购物车");
+                        addCartButton.attr("disabled", "disabled");
+                        addCartButton.css("background-color", "lightgray");
+                        addCartButton.css("border-color", "lightgray");
+                        addCartButton.css("color", "black")
+                    }
+                }
+            })
+        })
+    </script>
+</div>

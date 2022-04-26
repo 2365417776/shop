@@ -1,0 +1,73 @@
+<div th:fragment="categoryWithCarousel">
+    <div class="categoryWithCarousel" id="categoryWithCarousel">
+        <div class="headbar">
+            <div class="head">
+                <span class="glyphicon glyphicon-th-list" style="margin-left:10px"></span>
+                <span style="margin-left:10px">商品分类</span>
+            </div>
+            <div class="rightMenu">
+                <span>
+                    <a href="">
+                        <img th:src="@{img/site/chaoshi.png}" alt="">
+                    </a>
+                </span>
+                <span>
+                    <a href="">
+                        <img th:src="@{img/site/chaoshi.png}" alt="">
+                    </a>
+                </span>
+                <span v-for="c,index in categories" v-if="index <= 3">
+                    <a :href="'category?cid='+c.id">
+                        {{c.name}}
+                    </a>
+                </span>
+            </div>
+        </div>
+        <div class="categoryWithCarousel">
+            <div style="position:relative">
+                <div class="categoryMenu">
+                    <div class="eachCategory" :cid="c.id" v-for="c in categories">
+                        <span class="glyphicon glyphicon-link"></span>
+                        <a :href="'category?cid='+c.id">{{c.name}}</a>
+                    </div>
+                </div>
+            </div>
+            <div style="position:relative;left:0;top:0">
+                <div class="productsAsideCategorys" :cid="c.id" style="display: none" v-for="c in categories">
+                    <div class="row" v-for="ps in c.productsByRow">
+                        <a :href="'product?pid='+p.id" v-for="p in ps" v-if="p.subTitle.length != 0">
+                            {{p.subTitle | subTitleFilter}}
+                        </a>
+                        <div class="seperator"></div>
+                    </div>
+                </div>
+            </div>
+            <div style="height: 510px;"></div>
+        </div>
+        <div data-ride="carousel" class="carousel-of-product carousel slide" id="carousel-of-product">
+            <!-- Indicators -->
+            <ol class="carousel-indicators">
+                <li class="active" data-slide-to="0" data-target="#carousel-of-product"></li>
+                <li data-slide-to="1" data-target="#carousel-of-product" class=""></li>
+                <li data-slide-to="2" data-target="#carousel-of-product" class=""></li>
+                <li data-slide-to="3" data-target="#carousel-of-product" class=""></li>
+            </ol>
+            <!-- Wrapper for slides -->
+            <div role="listbox" class="carousel-inner">
+                <div class="item active">
+                    <img src="img/lunbo/1.jpg" class="carousel carouselImage">
+                </div>
+                <div class="item">
+                    <img src="img/lunbo/2.jpg" class="carouselImage">
+                </div>
+                <div class="item">
+                    <img src="img/lunbo/3.jpg" class="carouselImage">
+                </div>
+                <div class="item">
+                    <img src="img/lunbo/4.jpg" class="carouselImage">
+                </div>
+            </div>
+        </div>
+        <div class="carouselBackgroundDiv"></div>
+    </div>
+</div>

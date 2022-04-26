@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:include="include/lib::html">
+    <title>注册成功</title>
+</head>
+<body>
+<div th:replace="staticPage/publicPage/headNav::headNav"></div>
+<div th:replace="staticPage/publicPage/simpleSearchBar::simpleSearchBar"></div>
+<div class="orderFinishDiv" style="background: #f2fcf5;">
+    <div class="orderFinishTextDiv">
+        <img th:src="@{img/site/registerSuccess.png}">
+        <span>恭喜注册成功</span>
+        <span style="text-align: center;display: inline-block;margin-left:20%">
+            <span style="padding: 5px;color:red" id="retLog">3</span>秒后回到登录界面,如果没有返回请点击这里
+            <span style="margin:0 2px;cursor: pointer">
+                <a href="login">登录</a>
+            </span>
+        </span>
+    </div>
+</div>
+<div th:replace="staticPage/publicPage/pageFooter_1::pageFooter"></div>
+<div th:replace="staticPage/publicPage/pageFooter_2::pageFooter"></div>
+</body>
+<script>
+$(function(){
+    let retLog = $("#retLog");
+    let num = retLog.html();
+    let timer = setInterval(function(){
+        num--;
+        retLog.html(num);
+        if(num === 0){
+            clearInterval(timer);
+            location.href = "login"
+        }
+    }, 1000)
+})
+</script>
+</html>

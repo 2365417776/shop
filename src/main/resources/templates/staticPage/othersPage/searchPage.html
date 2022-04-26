@@ -1,0 +1,56 @@
+<div th:fragment="searchPage">
+    <div class="categoryPageDiv" id="searchPage">
+        <div class="categoryProducts">
+            <div class="productUnit" price="${p.promotePrice}" v-for="p in products">
+                <div class="productUnitFrame">
+                    <a :href="'product?pid='+p.id">
+                        <img :src="'img/productSingle/'+p.firstProductImage.id+'.jpg'" alt="" width="100px" class="productImage">
+                    </a>
+                    <span class="productPrice">{{p.promotePrice | formatMoneyFilter}}</span>
+                    <a class="productLink" :href="'product?pid='+p.id">
+                        {{p.name | subStringFilter(0, 50)}}
+                    </a>
+                    <a :href="'product?pid='+p.id" class="tmallLink">商城专卖</a>
+                    <div class="show1 productInfo">
+                        <span class="mouthDeal">月成交</span>
+                        <span class="productDealNumber">{{p.saleCount}}笔</span>
+                        <span class="productReview">评价 <span class="productReviewNumber">{{p.reviewCount}}</span></span>
+                        <span class="wangwang">
+                        <a href="" class="wangwanglink">
+                            <img src="https://how2j.cn/tmall/img/site/wangwang.png" alt="">
+                        </a>
+                    </span>
+                    </div>
+                </div>
+            </div>
+            <div v-if="products.length == 0" class="noMatch">
+                没有满足条件的产品
+            </div>
+            <div style="clear:both"></div>
+        </div>
+    </div>
+    <script>
+        $(function(){
+            let keyword = getUrlParms("keyword");
+            let dataVue = {
+                url:"foresearch",
+                products:[]
+            };
+            let vue = new Vue({
+                el:"#searchPage",
+                data:dataVue,
+                mounted:function(){
+                    this.load();
+                },
+                methods:{
+                    load:function(){
+                        let url = this.url + "?keyword=" + keyword;
+                        axios.post(url).then(function(response){
+                            vue.products = response.data;
+                        })
+                    }
+                }
+            })
+        })
+    </script>
+</div>

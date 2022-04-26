@@ -1,0 +1,156 @@
+<div th:fragment="order">
+    <div class="product_list">
+        <div class="product_main">
+            <div class="content" id="order">
+                <div class="column_bar">
+                    <div class="bar_left">
+                        <span><i class="fa fa-flag"></i>&nbsp;订单管理</span>
+                    </div>
+                    <div class="bar_right">
+                        <span><i class="fa fa-home"></i>&nbsp;当前位置：</span>
+                        <span><a href="#">首页 >&nbsp;</a></span>
+                        <span><a href="#">订单管理 >&nbsp;</a></span>
+                    </div>
+                </div>
+                <div class="table_list">
+                    <table style="margin:10px auto">
+                        <tr>
+                            <th style="width: 80px">ID</th>
+                            <th style="width: 80px">状态</th>
+                            <th style="width: 80px">金额</th>
+                            <th style="width: 80px">商品数量</th>
+                            <th style="width: 150px">买家名称</th>
+                            <th style="width: 150px">创建时间</th>
+                            <th style="width: 150px">支付时间</th>
+                            <th style="width: 150px">发货时间</th>
+                            <th style="width: 150px">确认收货时间</th>
+                            <th>操作</th>
+                        </tr>
+                        <template v-for="bean in beans">
+                            <tr>
+                                <td>{{bean.id}}</td>
+                                <td>{{bean.statusDesc}}</td>
+                                <td>{{bean.total}}</td>
+                                <td>{{bean.totalNumber}}</td>
+                                <td>{{bean.user.name}}</td>
+                                <td>{{bean.createDate | formatDateFilter}}</td>
+                                <td>{{bean.payDate | formatDateFilter}}</td>
+                                <td>{{bean.deliveryDate | formatDateFilter}}</td>
+                                <td>{{bean.confirmDate | formatDateFilter}}</td>
+                                <td>
+                                    <div class="option_category" style="background: transparent;border-radius:0;">
+                                        <button style="margin:2px 0" @click="showOrderItems(bean)" type="button" class="btn btn-primary btn-xs">查看详情</button>
+                                        <button style="margin:2px 0" v-if="bean.status === 'waitDelivery'" @click="deliveryOrder(bean, $event)" type="button" class="btn btn-primary btn-xs">发货</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="orderPageOrderItemTR" :id="'orderItemsTR' + bean.id" style="display: none;background: none">
+                                <td colspan="10">
+                                    <div class="orderPageOrderItem">
+                                        <table class="orderPageOrderItemTable" style="width: 100%;margin:10px auto">
+                                            <tr v-for="orderItem in bean.orderItemList">
+                                                <td style="padding:10px 20px">
+                                                    <img width="40px" height="40px" :src="'img/productSingle/' + orderItem.product.firstProductImage.id+'.jpg'" alt="">
+                                                </td>
+                                                <td style="padding:10px 50px 10px 20px">
+                                                    <a :href="'product?product.id=' + orderItem.product.id"></a>
+                                                    <span>{{orderItem.product.name}}</span>
+                                                </td>
+                                                <td>
+                                                    <span class="text-muted">{{orderItem.number}}个</span>
+                                                </td>
+                                                <td style="padding:10px 20px;">
+                                                    <span class="text-muted">单价：￥{{orderItem.product.promotePrice}}</span>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </td>
+                            </tr>
+                        </template>
+                    </table>
+                </div>
+                <div class="page_attention">
+                    <div class="dividePage">
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination">
+                                <li :class="{disabled:pagination.first}">
+                                    <a href="#" aria-label="Previous" @click="jump('first')">
+                                        <span aria-hidden="true">首页</span>
+                                    </a>
+                                </li>
+                                <li :class="{disabled: !pagination.hasPrevious}">
+                                    <a href="#" aria-label="Previous" @click="jump('pre')">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+
+                                <li v-for="i in pagination.navigatepageNums"><a href="#" @click="jumpByNumber(i-1)">{{i}}</a></li>
+
+                                <li :class="{disabled: !pagination.hasNext}">
+                                    <a href="#" aria-label="Next" @click="jump('next')">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                                <li :class="{disabled:pagination.last}">
+                                    <a href="#" aria-label="Next" @click="jump('last')">
+                                        <span aria-hidden="true">尾页</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(function(){
+            let dataVue = {
+                url:"orders",
+                beans:[],
+                pagination:{}
+            }
+            $(function(){
+                let vue = new Vue({
+                    el:"#order",
+                    data:dataVue,
+                    mounted:function(){
+                        this.list(0)
+                    },
+                    methods:{
+                        list:function(start){
+                            let url = this.url + "?start="+start;
+                            axios.get(url).then(function(response){
+                                vue.pagination = response.data;
+                                vue.beans = response.data.content;
+                            })
+                        },
+                        showOrderItems:function(order){
+                            let id = order.id;
+                            $("#orderItemsTR" + id).toggle();
+                        },
+                        jump(page){
+                            jump(page, vue);
+                        },
+                        jumpByNumber(start){
+                            jumpByNumber(start, vue);
+                        },
+                        deliveryOrder:function(order, e){
+                            let url = "deliveryOrder/" + order.id;
+                            axios.put(url).then(function(response){
+                                $(e.target).hide();
+                            })
+                        }
+                    }
+                });
+                Vue.filter('formatDateFilter', function(value, formatString){
+                    if(value === null)
+                        return "";
+                    formatString = formatString || 'YYYY-MM-DD HH:mm:ss';
+                    return moment(value).format(formatString);
+                });
+            })
+        })
+    </script>
+</div>

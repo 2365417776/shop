@@ -1,0 +1,59 @@
+<div th:fragment="simpleSearchBar">
+    <style>
+        div.simpleSearch{
+            margin-right:50px;
+        }
+        div.simpleSearchDiv{
+            background-color: #c40000;
+            width: 300px;
+            margin:10px 20px 40px;
+            padding: 1px;
+            height: 40px;
+            display: block;
+        }
+        div.simpleSearchDiv input{
+            width: 225px;
+            border:1px solid transparent;
+            height: 34px;
+            margin:2px;
+            outline:none;
+        }
+        div.simpleSearchDiv button{
+            width: 60px;
+            border:1px solid transparent;
+            background-color: #c40000;
+            color:white;
+            font-size:14px;
+        }
+        div.searchBelow{
+            margin-top: 5px;
+            margin-left: -15px;
+        }
+        div.searchBelow span{
+            color: #999999;
+        }
+        div.searchBelow a{
+            padding:0 15px;
+        }
+        a{
+            color: #999;
+        }
+        a:hover{
+            text-decoration: none;
+            color: #c40000;
+        }
+    </style>
+    <div class="simpleSearch" id="simpleSearchBar">
+        <div class="simpleSearchDiv pull-right">
+            <input type="text" name="keyword" placeholder="点击搜索">
+            <button type="button" class="searchButton">搜索框</button>
+            <div class="searchBelow">
+                <span th:if="${status.index >= 5 && status.index <= 8}" th:each="p,status :${application.categories_below_search}">
+                    <a th:href="@{'category?cid='+${p.id}}" th:text="${p.name}"></a>
+                    <span th:if="${status.index != 8}">|</span>
+                </span>
+            </div>
+        </div>
+        <div style="clear: both"></div>
+    </div>
+</div>

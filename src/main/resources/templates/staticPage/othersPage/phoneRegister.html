@@ -1,0 +1,35 @@
+<div th:fragment="phoneRegister">
+    <div class="phone_register blank">
+        <ul id="phone_register">
+            <li>
+                <i class="fa fa-mobile"></i>
+                <input type="text" placeholder="输入手机号" class="w_100">
+            </li>
+            <li style="overflow: hidden">
+                <i class="fa fa-code-fork"></i>
+                <input style="float:left; width: 65%;" type="text" placeholder="输入验证码" class="w_100">
+                <input class="layui-btn layui-btn-primary" style="float:right; margin:5px 0 5px 0;height: 40px;font:8px '微软雅黑';width: 30%;" type="button" value="发送验证码">
+            </li>
+            <li>
+                <i class="fa fa-lock"></i>
+                <input type="text" placeholder="输入密码" id="pwd_11" class="w_100">
+            </li>
+            <li>
+                <i class="fa fa-lock"></i>
+                <input type="text" placeholder="确认密码" id="pwd_22" class="w_100">
+            </li>
+            <li>
+            <li>
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox"> 同意服务协议
+                    </label>
+                </div>
+                <div style="text-align: center;font-size:14px;color:red">errorMessage</div>
+            </li>
+            <li id="phone_inset">
+                <button class="submit layui-btn layui-btn-radius" type="submit">点击注册</button>
+            </li>
+        </ul>
+    </div>
+</div>

@@ -1,0 +1,124 @@
+<div th:fragment="loginPage">
+    <div class="login_page content_center_row" id="loginPage">
+        <div class="body center">
+            <div class="body_content content_right">
+                <div class="login content_center_col">
+                    <h1 class="title">登录与注册</h1>
+                    <div class="main content_center_row">
+                        <div class="left_log log_other">
+                                <div class="input-group">
+                                    <span class="input-group-addon" id="user"><i class="glyphicon glyphicon-user"></i></span>
+                                    <input v-model="user.name" type="text" class="form-control" placeholder="邮箱或手机号或用户名" aria-describedby="user">
+                                </div>
+                                <div class="input-group" style="margin:20px 0 10px 0">
+                                    <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+                                    <input v-model="user.password" type="password" placeholder="请输入密码" class="form-control inputPwd" aria-label="Amount (to the nearest dollar)">
+                                    <span  @mousedown="openEye" @mouseup="closeEye" class="input-group-addon"><i class="eye glyphicon glyphicon-eye-close"></i></span>
+                                </div>
+                                <div id="errorMessage" style="text-align:center;color:#843534;font-weight: 700;background: #f1dddd;padding:4px;border-radius: 5px"></div>
+                                <input type="checkbox" id="remember" class="remember">
+                                <label for="remember" class="remember">记住密码</label> <br>
+                                <button @click="login" style="width: 100%;" class="submit layui-btn layui-btn-radius" type="submit">点击登录</button>
+
+                            <div class="forget_register">
+                                <div class="forget_pwd"><a href="">忘记密码</a></div>
+                                <div class="register"><a href="register">点击注册</a></div>
+                            </div>
+                        </div>
+                        <div class="right_other log_other">
+                            <form action="">
+                                <div class="select other">其他方式登录</div>
+                                <div class="mt_other" style="margin:20px 0;text-align: center">
+                                    <div>
+                                        <button class="layui-btn layui-btn-radius layui-btn-primary layui-btn-sm layui-btn-fluid fa fa-qq" style="color:#0e8fd1">&nbsp;&nbsp;<span style="color:black;font-weight: bold">qq登录</span></button>
+                                    </div>
+                                    <div style="margin-top:20px">
+                                        <button class="layui-btn layui-btn-radius layui-btn-primary layui-btn-sm layui-btn-fluid fa fa-weixin" style="color:#0eca1a">&nbsp;&nbsp;<span style="color:black;font-weight: bold">微信登录</span></button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        //登录与后台
+        $(function(){
+            let dataVue = {
+                url:'forelogin',
+                result:[],
+                user:{name:'', password:''}
+            };
+            $(function(){
+                let vue = new Vue({
+                    el:"#loginPage",
+                    data:dataVue,
+                    mounted:function(){
+                        $("#errorMessage").hide();
+                    },
+                    watch:{
+                      'user.name':{
+                          handler:function(){
+                              $("#errorMessage").hide();
+                          }
+                      },
+                      'user.password':{
+                          handler:function(){
+                              $("#errorMessage").hide();
+                          }
+                      }
+                    },
+                    methods:{
+                        login:function(){
+                            let errorMessage = $("#errorMessage");
+                            errorMessage.hide();
+                            let url = this.url;
+                            if(this.user.name.length === 0){
+                                errorMessage.html("请输入用户名");
+                                errorMessage.show();
+                                return
+                            }
+                            if(this.user.password.length === 0){
+                                errorMessage.html("请输入登录密码");
+                                errorMessage.show();
+                                return
+                            }
+                            axios.post(url, this.user).then(function(response){
+                                vue.result = response.data;
+                                if(response.data.code === 0){
+                                    location.href = "home";
+                                }
+                                else{
+                                    errorMessage.html(response.data.message);
+                                    errorMessage.show();
+                                }
+                            })
+                        },
+                        openEye:function(){
+                            let eye = $(".eye");
+                            let inputPwd = $(".inputPwd");
+                            $.each(eye, function(index, value){
+                                if($(value).attr("class") === 'eye glyphicon glyphicon-eye-close'){
+                                    $(value).attr("class", "eye glyphicon glyphicon-eye-open")
+                                    inputPwd.attr("type", "text")
+                                }
+                            })
+                        },
+                        closeEye:function(){
+                            let eye = $(".eye");
+                            let inputPwd = $(".inputPwd");
+                            $.each(eye, function(index, value){
+                                if($(value).attr("class") === 'eye glyphicon glyphicon-eye-open'){
+                                    $(value).attr("class", "eye glyphicon glyphicon-eye-close")
+                                    inputPwd.attr("type", "password")
+                                }
+                            })
+                        }
+                    }
+                })
+            })
+        })
+    </script>
+</div>

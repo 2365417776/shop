@@ -1,0 +1,38 @@
+<div th:fragment="aliPay">
+    <div class="aliPayPageDiv" id="aliPay">
+        <div class="aliPayPageLogo">
+            <img th:src="@{img/fix_bar/商城.svg}" class="pull-left" width="100px">
+            <div style="clear:both"></div>
+        </div>
+        <div>
+            <span class="confirmMoneyText">扫一扫付款（元）</span>
+            <span class="confirmMoney">
+		￥{{total | formatMoneyFilter}}</span>
+        </div>
+        <div>
+            <img th:src="@{img/site/alipay2wei.png}" class="aliPayImg">
+        </div>
+        <div>
+            <a :href="'paySuccess?oid='+oid+'&total='+total"><button class="confirmPay">确认支付</button></a>
+        </div>
+    </div>
+    <script>
+        $(function(){
+            let oid =getUrlParms("oid");
+            let total = getUrlParms("total");
+            let dataVue = {
+                oid:"",
+                total:""
+            };
+
+            let vue = new Vue({
+                el:"#aliPay",
+                data:dataVue,
+                mounted:function(){
+                    this.oid = oid;
+                    this.total = total;
+                }
+            })
+        })
+    </script>
+</div>

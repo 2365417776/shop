@@ -1,0 +1,201 @@
+<div th:fragment="userRegister">
+    <div class="email_register blank" id="userRegister">
+        <ul  id="email_register">
+            <li id="email_insert">
+                <i class="fa fa-user"></i>
+                <input v-model="user.name" type="text" id="email" placeholder="输入用户名" class="w_100">
+            </li>
+            <li>
+                <i class="fa fa-lock"></i>
+                <input v-model="user.password" style="padding-right:25px" type="password" placeholder="输入密码" id="pwd_1" class="w_100 inputPwd">
+                <span @mousedown="openEye" @mouseup="closeEye" class="eye glyphicon glyphicon-eye-close" style="position:absolute;right:10px;top:17px;"></span>
+            </li>
+            <li>
+                <i class="fa fa-lock"></i>
+                <input v-model="user.repeatpassword" type="password" placeholder="确认密码" id="pwd_2" class="w_100 inputPwd">
+                <span @mousedown="openEye" @mouseup="closeEye" class="eye glyphicon glyphicon-eye-close" style="position:absolute;right:10px;top:17px;"></span>
+            </li>
+            <li>
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" name="protocol"> 同意服务协议
+                    </label>
+                </div>
+                <div class="errorMessage" style="text-align:center;color:#843534;font-weight: 700;background: #f1dddd;padding:4px;border-radius: 5px"></div>
+            </li>
+            <li>
+                <button @click="register" class="submit layui-btn layui-btn-radius" type="submit">点击注册</button>
+            </li>
+        </ul>
+    </div>
+    <script>
+        $(function(){
+            let dataVue = {
+                url:"foreregister",
+                result:[],
+                user:{name:'', password:'', repeatpassword:''}
+            };
+            $(function(){
+                let vue = new Vue({
+                    el:"#userRegister",
+                    data:dataVue,
+                    mounted:function(){
+                        this.getResult();
+                    },
+                    watch:{
+                        'user.name':{
+                            handler(newVal, oldVal){
+                                $(".errorMessage").hide();
+                                this.getResult();
+                                if(this.user.name === ''){
+                                    $("#email").css({
+                                        border:"1px solid black",
+                                        color:"black"
+                                    })
+                                    $("div.errorMessage").html("");
+                                    return
+                                }
+                                $("#email").css({
+                                    border:"2px solid #3c763d",
+                                    color:"#3c763d"
+                                })
+                            }
+                        },
+                        'user.password':{
+                            handler(newVal, oldVal){
+                                $(".errorMessage").hide();
+                                if(this.result.code === 1)
+                                    return
+                                if(this.user.password === this.user.repeatpassword && this.user.password === ''){
+                                    $("#pwd_1, #pwd_2").css({
+                                        border:"1px solid black",
+                                        color:"black"
+                                    })
+                                    $("div.errorMessage").html("");
+                                    return
+                                }
+                                $("#pwd_1").css({
+                                    border:"2px solid #3c763d",
+                                    color:"#3c763d"
+                                })
+                            }
+                        },
+                        'user.repeatpassword':{
+                            handler(newVal, oldVal){
+                                $(".errorMessage").hide();
+                                if(this.result.code === 1)
+                                    return
+                                if(this.user.password === this.user.repeatpassword && this.user.repeatpassword === ''){
+                                    $("#pwd_1, #pwd_2").css({
+                                        border:"1px solid black",
+                                        color:"black"
+                                    })
+                                    $("div.errorMessage").html("");
+                                    return
+                                }
+                                $("#pwd_2").css({
+                                    border:"2px solid #3c763d",
+                                    color:"#3c763d"
+                                })
+                                if(this.user.password !== this.user.repeatpassword){
+                                    $("#pwd_1, #pwd_2").css({
+                                        border:"2px solid #a84442",
+                                        color:"#a84442"
+                                    })
+                                    $("div.errorMessage").html("密码不一致，请仔细核对");
+                                    $(".errorMessage").show();
+                                }else{
+                                    $("#pwd_1, #pwd_2").css({
+                                        border:"2px solid #3c763d",
+                                        color:"#3c763d"
+                                    })
+                                    $("div.errorMessage").html("");
+                                }
+                            }
+                        }
+                    },
+                    methods:{
+                        getResult:function(){
+                            $(".errorMessage").hide();
+                            let url = "testUsername";
+                            axios.post(url, this.user).then(function(response){
+                                vue.result = response.data;
+                                if(response.data.code === 1){
+                                    $("#email").css({
+                                        border:"2px solid #a84442",
+                                        color:"#a84442"
+                                    })
+                                }
+                                $("div.errorMessage").html(response.data.message);
+                                if(response.data.message !== null)
+                                    $(".errorMessage").show();
+                            })
+                        },
+                        register:function(){
+                            $(".errorMessage").hide();
+                            let checkStatus = $("input[name='protocol']").prop("checked")
+                            let url = this.url;
+                            let errorMessage = $("div.errorMessage");
+                            if(this.result.code === 1){
+                                errorMessage.html("用户名已经被占用");
+                                $(".errorMessage").show();
+                                return
+                            }
+                            if(this.user.name.length === 0){
+                                errorMessage.html("请输入用户名");
+                                $(".errorMessage").show();
+                                return
+                            }
+                            if(this.user.password.length === 0){
+                                errorMessage.html("请输入密码");
+                                $(".errorMessage").show();
+                                return
+                            }
+                            if(this.user.repeatpassword.length === 0){
+                                errorMessage.html("请输入确认密码");
+                                $(".errorMessage").show();
+                                return
+                            }
+                            if(this.user.password !== this.user.repeatpassword){
+                                errorMessage.html("密码不一致，请仔细核对");
+                                $(".errorMessage").show();
+                                return
+                            }
+                            if(!checkStatus){
+                                errorMessage.html("请同意协议");
+                                $(".errorMessage").show();
+                                return
+                            }
+                            errorMessage.html("");
+                            if(errorMessage.html() !== null){
+                                axios.post(url, this.user).then(function(){
+                                    location.href = "registerSuccess";
+                                })
+                            }
+                        },
+                        openEye:function(){
+                            let eye = $(".eye");
+                            let inputPwd = $(".inputPwd");
+                            $.each(eye, function(index, value){
+                                if($(value).attr("class") === 'eye glyphicon glyphicon-eye-close'){
+                                    $(value).attr("class", "eye glyphicon glyphicon-eye-open")
+                                    inputPwd.attr("type", "text")
+                                }
+                            })
+                        },
+                        closeEye:function(){
+                            let eye = $(".eye");
+                            let inputPwd = $(".inputPwd");
+                            $.each(eye, function(index, value){
+                                if($(value).attr("class") === 'eye glyphicon glyphicon-eye-open'){
+                                    $(value).attr("class", "eye glyphicon glyphicon-eye-close")
+                                    inputPwd.attr("type", "password")
+                                }
+                            })
+                        }
+                    }
+                })
+            })
+        })
+    </script>
+</div>

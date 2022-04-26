@@ -1,0 +1,69 @@
+<div th:fragment="categoryPage">
+    <div class="categoryPageDiv" id="categoryPage">
+        <title>{{c.name}}</title>
+        <img v-if="c.id != null" :src="'img/category/'+c.id+'.jpg'" alt="">
+        <div th:replace="staticPage/othersPage/categorySortBar::categorySortBar"></div>
+        <div th:replace="staticPage/othersPage/categoryProducts::categoryProducts"></div>
+    </div>
+    <script>
+        // 分类栏
+        $(function(){
+            $("input.sortBarPrice").keyup(function(){
+                let num = $(this).val();
+                if(num.length === 0){
+                    $("div.productUnit").show();
+                    return;
+                }
+                // 输入非法值都视为1
+                num = parseInt(num);
+                if(isNaN(num))
+                    num = 1;
+                if(num <= 0)
+                    num = 1;
+                $(this).val(num);
+
+                let begin = $("input.beginPrice").val();
+                let end = $("input.endPrice").val();
+                let productUnit = $("div.productUnit");
+                if( !isNaN(begin) && !isNaN(end)){
+                    productUnit.hide();
+                    productUnit.each(function(){
+                        let price = $(this).attr("price");
+                        price = new Number(price);
+                        if(price <= end && price >= begin)
+                            $(this).show();
+                    })
+                }
+            })
+        })
+        $(function(){
+            let cid = getUrlParms("cid");
+            let sort = getUrlParms("sort");
+            let dataVue = {
+              url:"forecategory",
+              c:'',
+              sort:''
+            };
+
+            let vue = new Vue({
+                el:"#categoryPage",
+                data:dataVue,
+                mounted:function(){
+                    this.load();
+                },
+                methods:{
+                    load:function(){
+                        this.sort = sort;
+                        let url = this.url + "/" + cid + "?sort=" + sort;
+                        axios.get(url).then(function(response){
+                            vue.c = response.data;
+                            vue.$nextTick(function(){
+
+                            })
+                        })
+                    }
+                }
+            })
+        })
+    </script>
+</div>

@@ -1,0 +1,27 @@
+<div th:fragment="categoryProducts">
+    <div class="categoryProducts">
+        <div v-for="p in c.products" class="productUnit" :price="p.promotePrice">
+            <div class="productUnitFrame">
+                <a :href="'product?pid='+p.id">
+                    <img :src="'img/productSingle_middle/'+p.firstProductImage.id+'.jpg'" alt="" width="100px" class="productImage">
+                </a>
+                <span class="productPrice">{{p.promotePrice | formatMoneyFilter}}</span>
+                <a :href="'product?pid'+p.id" class="productLink">
+                    {{p.name | subStringFilter(0, 50)}}
+                </a>
+                <a :href="'product?pid='+p.id" class="tmallLink">商城专卖</a>
+                <div class="show1 productInfo">
+                    <span class="mouthDeal">月成交</span>
+                    <span class="productDealNumber">{{p.saleCount}}笔</span>
+                    <span class="productReview">评价 <span class="productReviewNumber">{{p.reviewCount}}</span></span>
+                    <span class="wangwang">
+                        <a href="" class="wangwanglink">
+                            <img th:src="@{img/site/wangwang.png}" alt="">
+                        </a>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div style="clear:both"></div>
+    </div>
+</div>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:include="include/lib::html">
+</head>
+<title>分类管理</title>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <div th:replace="include/mainPage_header::mainHeader"></div>
+    <div th:replace="include/mainPage_leftBar::mainBar"></div>
+    <div class="layui-body">
+        <!-- 内容主体区域 -->
+        <div style="padding: 15px;">
+            <div th:replace="${page}::${content}"></div>
+        </div>
+
+    </div>
+    <div class="layui-footer">
+        <!-- 底部固定区域 -->
+        © 自定义网页
+    </div>
+</div>
+<script>
+    //JavaScript代码区域
+    layui.use('element', function(){
+        var element = layui.element;
+    });
+    let content = getUrlParms("content")
+    let title = $("title");
+    if(content === 'category'){
+        title.html("分类管理")
+    }
+    if(content === 'product'){
+        title.html("产品管理")
+    }
+    if(content === 'property'){
+        title.html("属性管理")
+    }
+    if(content === 'picture'){
+        title.html("图片管理")
+    }
+    if(content === 'propertyValue'){
+        title.html("属性值管理")
+    }
+    if(content === 'userList'){
+        title.html("用户管理")
+    }
+    if(content === 'order'){
+        title.html("订单管理")
+    }
+</script>
+<div th:replace="include/modal_category_add::modal_category"></div>
+<div th:replace="include/model_category_edit::modal_category"></div>
+<div th:replace="include/model_property_add::modal_property"></div>
+<div th:replace="include/model_property_edit::modal_property"></div>
+<div th:replace="include/model_product_add::modal_product"></div>
+<div th:replace="include/model_product_edit::modal_product"></div>
+<div th:replace="include/model_picture_addSingle::modal_picture"></div>
+<div th:replace="include/model_picture_addDetail::modal_picture"></div>
+</body>
+</html>

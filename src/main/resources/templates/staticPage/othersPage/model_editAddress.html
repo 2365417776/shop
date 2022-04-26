@@ -1,0 +1,103 @@
+<div th:fragment="editAddress">
+    <style>
+        table.baseInfo tr:first-child td{
+            padding:10px;
+        }
+        table.baseInfo tr:nth-child(2) td:nth-child(2) select{
+            margin-right: 5px;
+        }
+        .m_6{
+            padding:6px 0 !important;
+        }
+    </style>
+
+<div class="modal fade" id="editAddress" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">修改地址</h4>
+            </div>
+            <div class="modal-body">
+                <table class="table">
+                    <tr>
+                        <th style="border-top:0">收货地址</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <table class="baseInfo">
+                                <tr>
+                                    <td colspan="2" style="color:#f27b1d;font-weight: bold">修改收货地址</td>
+                                </tr>
+                                <tr>
+                                    <td style="width: 80px;"><span class="redColor">*&nbsp;</span>地址信息</td>
+                                    <td  class="m_6 content_center_row_left">
+                                        <select v-model="address.province" class="form-control w_100">
+                                            <option value="">选择省</option>
+                                            <option v-for="p in provinces">{{p.name}}</option>
+                                        </select>
+                                        <select v-model="address.city" class="form-control w_100">
+                                            <option value="">选择市</option>
+                                            <option v-for="c in cities">{{c.name}}</option>
+                                        </select>
+                                        <select v-model="address.county" class="form-control w_100">
+                                            <option value="">选择区/县</option>
+                                            <option v-for="ct in counties">{{ct.name}}</option>
+                                        </select>
+                                        <select v-model="address.town" class="form-control w_100">
+                                            <option value="">选择城镇/街道</option>
+                                            <option v-for="t in towns">{{t.name}}</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>默认地址：{{bean.address}}</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="redColor">*&nbsp;</span>详细地址</td>
+                                    <td class="m_6">
+                                        <textarea v-model.trim="bean.detail" class="form-control w_400" rows="3"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>邮政编码</td>
+                                    <td class="m_6">
+                                        <input v-model.trim="bean.post" type="text" class="form-control w_400" placeholder="邮政编码">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><span class="redColor">*&nbsp;</span>收货人姓名</td>
+                                    <td class="m_6">
+                                        <input v-model.trim="bean.consignee" type="text" class="form-control w_400" placeholder="收货人姓名">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><span  class="redColor">*&nbsp;</span>手机号</td>
+                                    <td class="m_6">
+                                        <input v-model.trim="bean.phone" type="text" class="form-control w_400" placeholder="输入手机号">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td class="m_10">
+                                        <div class="checkbox">
+                                            <label>
+                                                <input id="setDefault2" type="checkbox"> 设置为默认地址
+                                            </label>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button @click="update" type="button" class="btn btn-primary">提交</button>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
