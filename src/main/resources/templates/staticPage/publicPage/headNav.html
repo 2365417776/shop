@@ -39,7 +39,7 @@
         <a style="cursor: pointer" v-if="result.code === 0">{{user.name}}</a>
         <a href="register" style="cursor: pointer" v-if="result.code !== 0">免费注册</a>
         <a @click="exitLogin" style="cursor: pointer" v-if="result.code === 0">退出</a>
-        <a href="#" v-if="result.code === 0"><div class="pic_display"><img class="headPic" :src="'img/userImage/'+user.name+'.jpg'" alt=""></div></a>
+        <a href="userInfo" v-if="result.code === 0"><div class="pic_display"><img class="headPic" :src="'img/userImage/'+user.name+'.jpg'" alt=""></div></a>
         <span class="pull-right" style="margin-right:30px;margin-top:3px ">
             <a @click="toggleLoginModel();orderJump()" style="cursor: pointer" >我的订单</a>
             <a @click="toggleLoginModel();cartJump()" style="cursor: pointer">

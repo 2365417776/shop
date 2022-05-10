@@ -549,4 +549,15 @@ public class ForeRESTController {
         userService.update(user);
         return user;
     }
+    @GetMapping("getDefaultAddress")
+    public Object getDefaultAddress(HttpSession session){
+        User user = (User)session.getAttribute("user");
+        List<Address> addresses = addressService.get(user);
+        for (Address address : addresses){
+            if(address.getStatus().equals("default")){
+                return Result.success(address);
+            }
+        }
+        return Result.fail("请选择一个默认收货地址");
+    }
 }

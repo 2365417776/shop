@@ -7,26 +7,39 @@
                 <div style="clear:both"></div>
             </div>
             <div class="address">
-                <div class="addressTip">输入收货地址</div>
+                <div class="addressTip">选择收货地址</div>
                 <div>
-                    <table class="addressTable">
-                        <tbody><tr>
-                            <td class="firstColumn">详细地址<span class="redStar">*</span></td>
-                            <td><textarea v-model="order.address" placeholder="建议您如实填写详细收货地址，例如街道名称，门牌号码，楼层和房间号等信息" name="address"></textarea></td>
-                        </tr>
+                    <table class="layui-table" style="margin-top:20px">
+                        <colgroup>
+                            <col style="width: 60px;">
+                            <col style="width: 250px;">
+                            <col style="width: 80px;">
+                            <col style="width: 80px;">
+                            <col style="width: 120px;">
+                        </colgroup>
+                        <thead>
                         <tr>
-                            <td>邮政编码</td>
-                            <td><input v-model="order.post" type="text" placeholder="如果您不清楚邮递区号，请填写000000" name="post"></td>
+                            <th>收货人</th>
+                            <th style="text-align: center">收货地址</th>
+                            <th>邮编</th>
+                            <th>手机号</th>
+                            <th>操作</th>
                         </tr>
-                        <tr>
-                            <td>收货人姓名<span class="redStar">*</span></td>
-                            <td><input v-model="order.receiver" type="text" placeholder="长度不超过25个字符" name="receiver"></td>
+                        </thead>
+                        <tbody>
+                        <tr v-for="address in addresses">
+                            <td>{{address.consignee}}</td>
+                            <td>{{address.address}} {{address.detail}}</td>
+                            <td>{{address.post}}</td>
+                            <td>{{address.phone}}</td>
+                            <td>
+                                <a @click="modify(address.id)">修改</a>&nbsp;|
+                                <button @click="setDefault(address.id)" v-if="address.status == 'normal'" class="layui-btn layui-btn-radius layui-btn-normal layui-btn-xs">设为默认</button>
+                                <span v-if="address.status == 'default'">默认地址</span>
+                            </td>
                         </tr>
-                        <tr>
-                            <td>手机号码 <span class="redStar">*</span></td>
-                            <td><input v-model="order.mobile" type="text" placeholder="请输入11位手机号码" name="mobile"></td>
-                        </tr>
-                        </tbody></table>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -123,36 +136,187 @@
                 url:"forebuy",
                 total:0,
                 orderItems:[],
-                order:{address:'', post:'', receiver:'', mobile:'', userMessage:''}
+                order:{address:'', post:'', receiver:'', mobile:'', userMessage:''},
+                addresses:'',
+                bean:[],
+                address:{province:'', city:'', county:'',town:''},
+                provinces:[],
+                cities:[],
+                counties:[],
+                towns:[],
             }
-            let vue = new Vue({
-                el:"#buyPage",
-                data:dataVue,
-                mounted:function(){
-                    this.load();
-                },
-                methods:{
-                    load:function(){
-                        let url = this.url + "?oiid=" + oiid;
-                        axios.get(url).then(function(response){
-                            let result = response.data;
-                            vue.total = result.data.total;
-                            vue.orderItems = result.data.orderItems;
-                            vue.$nextTick(function(){
-
-                            })
-                        })
+            $(function(){
+                let vue = new Vue({
+                    el:"#buyPage",
+                    data:dataVue,
+                    mounted:function(){
+                        this.load();
                     },
-                    submitOrder:function(){
-                        let url = "forecreateOrder";
-                        axios.post(url, this.order).then(function(response){
-                            let result = response.data;
-                            let oid = result.data.oid;
-                            let total = result.data.total;
-                            location.href = "alipay?oid="+oid+"&total="+total;
-                        })
+                    methods:{
+                        refreshAddress(){
+                            let url = "getAddress";
+                            axios.get(url).then(function(response){
+                                let result = response.data;
+                                if(result.code === 0){
+                                    vue.addresses = result.data;
+                                }else{
+                                    location = "login";
+                                }
+                            })
+                        },
+                        modify(addressId){
+                            $("#editAddress").modal("show");
+                            let url  = "getAddressById?addressId="+addressId;
+                            axios.get(url).then(function(response){
+                                vue.bean = response.data;
+                            })
+                        },
+                        setDefault(addressId){
+                            let url = "setDefaultAddress?addressId="+addressId;
+                            axios.get(url).then(function(response){
+                                if(response.data.code === 1){
+                                    location.href = "login";
+                                }
+                                vue.refreshAddress();
+                            })
+                        },
+                        load:function(){
+                            let url = this.url + "?oiid=" + oiid;
+                            axios.get(url).then(function(response){
+                                let result = response.data;
+                                vue.total = result.data.total;
+                                vue.orderItems = result.data.orderItems;
+                                vue.$nextTick(function(){
+
+                                })
+                            });
+                            this.refreshAddress();
+                        },
+                        submitOrder:function(){
+                            let url = "forecreateOrder";
+                            let url2 = "getDefaultAddress";
+                            axios.get(url2).then(function(response){
+                                let result = response.data;
+                                if(result.code === 0){
+                                    let address = result.data;
+                  // order:{address:'', post:'', receiver:'', mobile:'', userMessage:''},
+                                    vue.order.address = address.address + " " + address.detail;
+                                    vue.order.post = address.post;
+                                    vue.order.receiver = address.consignee;
+                                    vue.order.mobile = address.phone;
+                                    vue.order.userMessage = $(".leaveMessageTextarea").val();
+                                    axios.post(url, vue.order).then(function(response){
+                                        let result = response.data;
+                                        let oid = result.data.oid;
+                                        let total = result.data.total;
+                                        location.href = "alipay?oid="+oid+"&total="+total;
+                                    })
+                                }else{
+                                    alert(result.message);
+                                }
+                            })
+                        }
                     }
-                }
+                })
+            })
+            $(function(){
+                let vue = new Vue({
+                    el:"#editAddress",
+                    data:dataVue,
+                    watch:{
+                        'address.province':{
+                            handler:function(newVal, oldVal){
+                                let url = "getCityByProvince?provinceName="+newVal;
+                                axios.get(url).then(function(response){
+                                    vue.cities = response.data;
+                                });
+                                if(this.address.county){
+                                    vue.counties = null;
+                                    vue.towns = null;
+                                }
+                            }
+                        },
+                        'address.city':{
+                            handler:function(newVal, oldVal){
+                                let url = "getCountyByCity?cityName="+newVal;
+                                axios.get(url).then(function(response){
+                                    vue.counties = response.data;
+                                });
+                                if(this.address.county){
+                                    vue.towns = null;
+                                }
+                            }
+                        },
+                        'address.county':{
+                            handler:function(newVal, oldVal){
+                                let url = "getTownByCounty?countyName="+newVal;
+                                axios.get(url).then(function(response){
+                                    vue.towns = response.data;
+                                })
+                            }
+                        }
+                    },
+                    mounted:function(){
+                        this.load();
+                    },
+                    methods:{
+                        refreshAddress(){
+                            let url = "getAddress";
+                            axios.get(url).then(function(response){
+                                let result = response.data;
+                                if(result.code === 0){
+                                    vue.addresses = result.data;
+                                }else{
+                                    location = "login";
+                                }
+                            })
+                        },
+                        load:function(){
+                            let url = "getProvinces";
+                            axios.get(url).then(function(response){
+                                vue.provinces = response.data;
+                            });
+                        },
+                        update(){
+                            if(!checkEmpty(this.bean.address, "具体地址"))
+                                return;
+                            if(!checkEmpty(this.bean.detail, "详细地址"))
+                                return;
+                            if(!checkEmpty(this.bean.consignee, "收货人"))
+                                return;
+                            if(!checkEmpty(this.bean.phone, "手机号"))
+                                return;
+                            let address = this.bean.address;
+                            if(this.address.province !== ''){
+                                address = '';
+                                address += (this.address.province + ' ');
+                            }
+                            if(this.address.city !== ''){
+                                address += (this.address.city + ' ');
+                            }
+                            if(this.address.county !== ''){
+                                address += (this.address.county + ' ');
+                            }
+                            if(this.address.town !== ''){
+                                address += (this.address.town);
+                            }
+                            this.bean.address = address;
+                            let url = "updateAddress";
+                            let setDefault = $("#setDefault2").prop("checked");
+                            if(setDefault){
+                                this.bean.status = "default";
+                            }else{
+                                this.bean.status = "normal";
+                            }
+                            let editAddress = $("#editAddress");
+                            axios.post(url, this.bean).then()
+                            editAddress.modal("hide");
+                            editAddress.on("hidden.bs.modal", function(){
+                                vue.refreshAddress();
+                            })
+                        }
+                    }
+                })
             })
         })
     </script>
