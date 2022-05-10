@@ -15,6 +15,14 @@
                 <input v-model="user.repeatpassword" type="password" placeholder="确认密码" id="pwd_2" class="w_100 inputPwd">
                 <span @mousedown="openEye" @mouseup="closeEye" class="eye glyphicon glyphicon-eye-close" style="position:absolute;right:10px;top:17px;"></span>
             </li>
+            <li style="overflow: hidden">
+                <i class="fa fa-code-fork"></i>
+                <input style="float:left; width: 55%;" type="text" placeholder="输入验证码" class="w_100 captcha_input">
+                <div class="item-input" style="float:right; margin:5px 0 5px 0;height: 40px;font:8px '微软雅黑';width: 40%;">
+                    <img id="captcha_img" alt="点击更换" title="点击更换"
+                         onclick="refresh()" src="mykaptcha" />
+                </div>
+            </li>
             <li>
                 <div class="checkbox">
                     <label>
@@ -29,6 +37,9 @@
         </ul>
     </div>
     <script>
+        function refresh() {
+            document.getElementById('captcha_img').src="mykaptcha?"+Math.random();
+        }
         $(function(){
             let dataVue = {
                 url:"foreregister",
@@ -134,6 +145,7 @@
                         register:function(){
                             $(".errorMessage").hide();
                             let checkStatus = $("input[name='protocol']").prop("checked")
+                            let captchaInput = $(".captcha_input").val()
                             let url = this.url;
                             let errorMessage = $("div.errorMessage");
                             if(this.result.code === 1){
@@ -161,15 +173,28 @@
                                 $(".errorMessage").show();
                                 return
                             }
+                            if(captchaInput.length === 0 || (captchaInput.indexOf(" ") !== -1)){
+                                errorMessage.html("请输入验证码");
+                                $(".errorMessage").show();
+                                return
+                            }
                             if(!checkStatus){
                                 errorMessage.html("请同意协议");
                                 $(".errorMessage").show();
                                 return
                             }
                             errorMessage.html("");
-                            if(errorMessage.html() !== null){
-                                axios.post(url, this.user).then(function(){
-                                    location.href = "registerSuccess";
+                            if(errorMessage.html() === ""){
+                                axios.post("verty", captchaInput).then(function(response){
+                                    if(response.data.code === 1){
+                                        errorMessage.html("验证码错误");
+                                        $(".errorMessage").show();
+                                    }else{
+                                        errorMessage.html("");
+                                        axios.post(url, vue.user).then(function(){
+                                            location.href = "registerSuccess";
+                                        })
+                                    }
                                 })
                             }
                         },

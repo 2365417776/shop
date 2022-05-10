@@ -12,10 +12,21 @@
         nav.top span, nav.top a{
             color:#999;
             margin:0 10px 0 10px;
+            vertical-align: middle;
         }
         nav.top a:hover{
             color:#c40000;
             text-decoration: none;
+        }
+        nav.top div.pic_display{
+            width: 20px;
+            height: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            display: inline-block;
+        }
+        nav.top img.headPic{
+            height: 20px;
         }
     </style>
     <nav class="top" id="HeadNav">
@@ -28,15 +39,16 @@
         <a style="cursor: pointer" v-if="result.code === 0">{{user.name}}</a>
         <a href="register" style="cursor: pointer" v-if="result.code !== 0">免费注册</a>
         <a @click="exitLogin" style="cursor: pointer" v-if="result.code === 0">退出</a>
-        <span class="pull-right" style="margin-right:30px">
-        <a @click="toggleLoginModel();orderJump()" style="cursor: pointer" >我的订单</a>
-        <a @click="toggleLoginModel();cartJump()" style="cursor: pointer">
-            <span class="glyphicon glyphicon-shopping-cart redColor"></span>
-            购物车
-            <strong th:text="${session.cartTotalItemNumber}"></strong>
-            件
-        </a>
-    </span>
+        <a href="#" v-if="result.code === 0"><div class="pic_display"><img class="headPic" :src="'img/userImage/'+user.name+'.jpg'" alt=""></div></a>
+        <span class="pull-right" style="margin-right:30px;margin-top:3px ">
+            <a @click="toggleLoginModel();orderJump()" style="cursor: pointer" >我的订单</a>
+            <a @click="toggleLoginModel();cartJump()" style="cursor: pointer">
+                <span class="glyphicon glyphicon-shopping-cart redColor"></span>
+                购物车
+                <strong th:text="${session.cartTotalItemNumber}"></strong>
+                件
+            </a>
+        </span>
     </nav>
     <script>
         $(function(){
@@ -76,7 +88,7 @@
                     exitLogin(){
                         let url = "forelogout";
                         axios.get(url).then(function(){
-                            location.reload();
+                            location.href="home"
                         })
                     }
                 }

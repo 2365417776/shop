@@ -4,7 +4,7 @@
         <div class="bigBox">
             <div class="titleBig">
                 <div class="title_left headPic">
-                    <img th:src="@{img/test.jpg}" alt="" height="50px">
+                    <img th:src="@{''+${session.user.photo}}" alt="" height="50px">
                 </div>
                 <div class="title_left headName">
                     <span>用户</span><br>
@@ -19,15 +19,15 @@
     </div>
     <div class="mainBody">
         <div class="selectProductInfo">
-            <div>个人信息</div>
+            <div @click="myInfo">个人信息</div>
             <div>已买商品</div>
             <div>我的收藏</div>
             <div>我的评价</div>
             <div>我的足迹</div>
-            <div>收货地址</div>
-            <div>安全管理</div>
+            <div @click="addressInfo">收货地址</div>
+            <div @click="safeInfo">安全管理</div>
         </div>
-        <div style="display: none" class="mainInfo">
+        <div class="funcToggle mainInfo">
             <table class="table">
                 <tr>
                     <th style="border-top:0">个人信息</th>
@@ -36,74 +36,65 @@
                     <td>
                         <table class="baseInfo">
                             <tr>
-                                <td><span class="redColor">*&nbsp;</span>当前头像</td>
+                                <td class="w_100">当前头像</td>
                                 <td class="content_center_row_left">
                                     <div style="width: 60px;height: 60px;overflow: hidden">
-                                        <img height="60px" th:src="@{img/test.jpg}" alt="">
+                                        <img height="60px" th:src="@{''+${session.user.tempphoto}}" alt="">
                                     </div>
-                                    <input style="padding-left:20px" id="changeImg" type="file" typeof="*">
+                                    <input style="padding-left:20px" id="changeImg" type="file" accept="image/*" @change="getFile($event)">
                                 </td>
                             </tr>
                             <tr>
                                 <td><span class="redColor">*&nbsp;</span>昵称</td>
                                 <td>
-                                    <input type="text" class="form-control w_400" placeholder="Text input">
+                                    <input v-model="userInfo.nickname" type="text" class="form-control w_400" placeholder="Text input">
                                 </td>
                             </tr>
                             <tr>
                                 <td>真实姓名</td>
                                 <td>
-                                    <input type="text" class="form-control w_400" placeholder="Text input">
+                                    <input v-model="userInfo.realname" type="text" class="form-control w_400" placeholder="Text input">
                                 </td>
                             </tr>
                             <tr>
                                 <td><span class="redColor">*&nbsp;</span>性别</td>
                                 <td>
                                     <label class="radio-inline">
-                                        <input type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1"> 男
+                                        <input class="sex" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1"> 男
                                     </label>
                                     <label class="radio-inline">
-                                        <input type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2"> 女
+                                        <input class="sex" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2"> 女
+                                    </label>
+                                    <label class="radio-inline">
+                                        <input class="sex" type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option2"> 保密
                                     </label>
                                 </td>
                             </tr>
                             <tr>
-                                <td>居住地</td>
+                                <td><span class="redColor">*&nbsp;</span>地址信息</td>
                                 <td class="content_center_row_left">
-                                    <select class="form-control w_120">
-                                        <option>新疆维吾尔自治区</option>
-                                        <option>2</option>
-                                        <option>3</option>
-                                        <option>4</option>
-                                        <option>5</option>
+                                    <select v-model="address.province" class="form-control w_120">
+                                        <option value="">选择省</option>
+                                        <option v-for="p in provinces">{{p.name}}</option>
                                     </select>
-                                    <select class="form-control w_120">
-                                        <option>1</option>
-                                        <option>2</option>
-                                        <option>3</option>
-                                        <option>4</option>
-                                        <option>5</option>
+                                    <select v-model="address.city" class="form-control w_120">
+                                        <option value="">选择市</option>
+                                        <option v-for="c in cities">{{c.name}}</option>
                                     </select>
-                                    <select class="form-control w_120">
-                                        <option>1</option>
-                                        <option>2</option>
-                                        <option>3</option>
-                                        <option>4</option>
-                                        <option>5</option>
+                                    <select v-model="address.county" class="form-control w_120">
+                                        <option value="">选择区/县</option>
+                                        <option v-for="ct in counties">{{ct.name}}</option>
                                     </select>
-                                    <select class="form-control w_120">
-                                        <option>1</option>
-                                        <option>2</option>
-                                        <option>3</option>
-                                        <option>4</option>
-                                        <option>5</option>
+                                    <select v-model="address.town" class="form-control w_120">
+                                        <option value="">选择城镇/街道</option>
+                                        <option v-for="t in towns">{{t.name}}</option>
                                     </select>
                                 </td>
                             </tr>
                             <tr>
                                 <td>详细地址</td>
                                 <td>
-                                    <textarea class="form-control w_400" rows="3"></textarea>
+                                    <textarea v-model="detail" class="form-control w_400" rows="3"></textarea>
                                 </td>
                             </tr>
                         </table>
@@ -111,12 +102,12 @@
                 </tr>
                 <tr>
                     <td>
-                        <button style="margin-left:100px" type="button" class="btn btn-primary btn-sm active">点击保存</button>
+                        <button @click="userInfoSave" style="margin-left:100px" type="button" class="btn btn-primary btn-sm active">点击保存</button>
                     </td>
                 </tr>
             </table>
         </div>
-        <div style="display: none" class="safeInfo">
+        <div style="display: none" class="funcToggle safeInfo">
             <table class="table">
                 <tr>
                     <th style="border-top:0">安全信息</th>
@@ -125,22 +116,22 @@
                     <td>
                         <table class="baseInfo safeModify">
                             <tr>
-                                <td>登录用户名</td>
-                                <td colspan="2">缘起缘灭</td>
+                                <td class="w_100">登录用户名</td>
+                                <td colspan="2">{{user.name}}</td>
                             </tr>
                             <tr>
                                 <td>绑定手机</td>
-                                <td>130****6085</td>
-                                <td class="p_l_30"><a href="">修改手机号</a></td>
+                                <td>{{user.phone | phoneHideFilter}}</td>
+                                <td class="p_l_30"><a href="">修改或添加手机号</a></td>
                             </tr>
                             <tr>
                                 <td>绑定邮箱</td>
-                                <td>2365417776@qq.com</td>
-                                <td class="p_l_30"><a href="">修改邮箱</a></td>
+                                <td>{{user.email}}</td>
+                                <td class="p_l_30"><a href="">修改或添加邮箱</a></td>
                             </tr>
                             <tr>
                                 <td>登录密码</td>
-                                <td>******</td>
+                                <td>**********</td>
                                 <td class="p_l_30">
                                     <a href="">修改登录密码</a>
                                 </td>
@@ -155,7 +146,7 @@
                 </tr>
             </table>
         </div>
-        <div class="addressInfo">
+        <div style="display: none" class="funcToggle addressInfo">
             <div th:replace="staticPage/othersPage/addressInfoEdit"></div>
             <div class="saveAddressTag content_left">
                 <i class="fa fa-exclamation-circle" style="color:#3bb3f1;font-size:18px "></i>
@@ -213,7 +204,12 @@
                 phone:'',
                 post:'',
                 addresses:'',
-                bean:[]
+                bean:[],
+                img:null,
+                tempphoto:null,
+                imgPath:'',
+                user:'',
+                userInfo:{photo:'',tempphoto:'',nickname:'',realname:'', sex:'', address:null, detail:null}
             };
             $(function(){
                 let vue = new Vue({
@@ -221,6 +217,14 @@
                     data:dataVue,
                     mounted:function(){
                         this.load();
+                        axios.get("forecheckLogin").then(function(response){
+                            if(response.data.code === 0){
+                                let result = response.data;
+                                vue.user = result.data;
+                            }else{
+                                location.href = "home";
+                            }
+                        })
                     },
                     watch:{
                         'address.province':{
@@ -323,6 +327,68 @@
                             let url  = "getAddressById?addressId="+addressId;
                             axios.get(url).then(function(response){
                                 vue.bean = response.data;
+                            })
+                        },
+                        hideFunc(){
+                            let funcToggle = $(".funcToggle")
+                            funcToggle.hide()
+                        },
+                        myInfo(){
+                            this.hideFunc();
+                            $(".mainInfo").show();
+                        },
+                        safeInfo(){
+                            this.hideFunc();
+                            $(".safeInfo").show();
+                        },
+                        addressInfo(){
+                            this.hideFunc();
+                            $(".addressInfo").show();
+                        },
+                        getFile(event){
+                            vue.tempphoto = event.target.files[0];
+                            let url = "userInfoTempImage";
+                            let formData = new FormData();
+                            formData.append("image", this.tempphoto)
+                            axios.post(url,formData).then(function(response){
+                                location.reload();
+                            })
+                        },
+                        userInfoSave(){
+                            if(!checkEmpty(this.userInfo.nickname, "昵称"))
+                                return;
+
+                            if(this.address.province === "" || this.address.city === "" || this.address.county === "" || this.address.town === ""){
+                                alert("地址不能为空");
+                                return;
+                            }
+                            if(!checkEmpty(this.detail, "详细地址"))
+                                return;
+                            let sex = $(".sex");
+                            $.each(sex, function(index, value){
+                                value = $(value);
+                                let result = value.prop("checked");
+                                if(index === 0 && result === true)
+                                    vue.userInfo.sex = "男";
+                                else if(index === 1 && result === true)
+                                    vue.userInfo.sex = "女";
+                                else if(index === 2 && result === true)
+                                    vue.userInfo.sex = "保密";
+                            })
+                            if(!checkEmpty(this.userInfo.sex, "性别"))
+                                return;
+                            vue.userInfo.address = this.address.province + " " + this.address.city + " " + this.address.county + " " + this.address.town;
+                            vue.userInfo.detail = this.detail;
+                            let url = "userInfoImage";
+                            let userInfo = this.userInfo;
+                            vue.img = this.tempphoto;
+                            axios.post(url).then(function(response){
+
+                            })
+                            axios.post("userInfoMain", userInfo).then(function(response){
+                                console.log(response.data);
+                                alert("保存成功");
+                                location.reload();
                             })
                         }
                     }

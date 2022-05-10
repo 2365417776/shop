@@ -19,6 +19,60 @@ public class User {
     private String email;
     private String phone;
     private String photo;
+    private String sex;
+    private String nickname;
+    private String realname;
+    private String address;
+    private String detail;
+    private String tempphoto;
+
+    public String getTempphoto() {
+        return tempphoto;
+    }
+
+    public void setTempphoto(String tempphoto) {
+        this.tempphoto = tempphoto;
+    }
+
+    public String getSex() {
+        return sex;
+    }
+
+    public void setSex(String sex) {
+        this.sex = sex;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public String getRealname() {
+        return realname;
+    }
+
+    public void setRealname(String realname) {
+        this.realname = realname;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getDetail() {
+        return detail;
+    }
+
+    public void setDetail(String detail) {
+        this.detail = detail;
+    }
 
     public String getEmail() {
         return email;

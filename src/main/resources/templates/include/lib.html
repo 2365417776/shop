@@ -106,6 +106,7 @@
             if(start !== vue.pagination.number)
                 vue.list(start);
         }
+        //金钱数字的格式化
         function formatMoney(num){
             num = new String(num);
             num = num.toString().replace(/\$|\,/g,'');
@@ -121,24 +122,6 @@
                 num = num.substring(0,num.length-(4*i+3))+','+
                     num.substring(num.length-(4*i+3));
             return (((sign)?'':'-') + num + '.' + cents);
-        }
-        function linkDefaultActions(){
-            $("span.leaveMessageTextareaSpan").hide();
-            $("img.leaveMessageImg").click(function(){
-                $(this).hide();
-                $("span.leaveMessageTextareaSpan").show();
-                $("div.orderItemSumDiv").css("height","100px");
-            });
-            $("div#footer a[href$=#nowhere]").click(function(){
-                alert("模仿天猫的连接，并没有跳转到实际的页面");
-            });
-            $("a.wangwanglink").click(function(){
-                alert("模仿旺旺的图标，并不会打开旺旺");
-            });
-
-            $("a.notImplementLink").click(function(){
-                alert("这个功能没做，蛤蛤~");
-            });
         }
 
         Vue.filter("subStringFilter", function(value, start, end){
@@ -156,6 +139,12 @@
                 return "";
             formatString = formatString || 'YYYY-MM-DD HH:mm:ss';
             return moment(value).format(formatString);
+        });
+        Vue.filter('phoneHideFilter', function(value){
+            if(value == null)
+                return "";
+            let result = value.substring(0, 3) + "****" + value.substring(7, value.lastIndex);
+            return result;
         });
     </script>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">

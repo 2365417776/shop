@@ -37,4 +37,7 @@ public class UserService {
     public User get(int uid){
         return userDAO.getOne(uid);
     }
+    public void update(User user){
+        userDAO.save(user);
+    }
 }

@@ -1,16 +1,24 @@
 package com.yuan.web;
 
+import com.google.code.kaptcha.Producer;
 import com.yuan.comparator.*;
 import com.yuan.pojo.*;
 import com.yuan.service.*;
+import com.yuan.tools.CodeUtil;
+import com.yuan.tools.ImageUtil;
 import com.yuan.tools.Result;
 import org.apache.commons.lang.math.RandomUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.HtmlUtils;
 
+import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -44,6 +52,8 @@ public class ForeRESTController {
     private TownService townService;
     @Autowired
     private AddressService addressService;
+    @Autowired
+    private Producer producer;
 
     @GetMapping("/forehome")
     public Object home(){
@@ -475,5 +485,68 @@ public class ForeRESTController {
             }
         }
         addressService.update(address);
+    }
+
+    @RequestMapping("/verty")
+    public Object verty(HttpServletRequest request, @RequestBody String vertyCode) {
+        if((vertyCode.indexOf("+") != -1) || (vertyCode.indexOf("=") != -1)){
+            vertyCode = vertyCode.replace("=", "");
+            vertyCode = vertyCode.replace("+", "");
+        }
+        if (!CodeUtil.checkVerifyCode(request, vertyCode)) {
+            return Result.fail("验证码错误");
+        } else {
+            return Result.success();
+        }
+    }
+
+    @PostMapping("userInfoImage")
+    public void userInfoImage(HttpSession session,HttpServletRequest request)throws Exception{
+        User user = (User)session.getAttribute("user");
+        File userFolder = new File(request.getServletContext().getRealPath("img/userImage"));
+        File file = new File(userFolder, user.getName()+".jpg");
+        File file2 = new File(userFolder, user.getName()+"_temp.jpg");
+        if(!file.getParentFile().exists())
+            file.getParentFile().mkdirs();
+        try{
+            BufferedImage tempImg = ImageIO.read(file2);
+            ImageIO.write(tempImg, "jpg", file);
+            String imgPath = "img/" + userFolder.getName() + "/" + file.getName();
+            user.setPhoto(imgPath);
+            userService.update(user);
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+    @PostMapping("userInfoTempImage")
+    public void userInfoTempImage(HttpSession session,HttpServletRequest request, MultipartFile image)throws Exception{
+        if(image == null)
+            return;
+        User user = (User)session.getAttribute("user");
+        File userFolder = new File(request.getServletContext().getRealPath("img/userImage"));
+        File file = new File(userFolder, user.getName()+"_temp.jpg");
+        if(!file.getParentFile().exists())
+            file.getParentFile().mkdirs();
+        try{
+            image.transferTo(file);
+            BufferedImage img = ImageUtil.change2jpg(file);
+            ImageIO.write(img, "jpg", file);
+            String imgPath = "img/" + userFolder.getName() + "/" + file.getName();
+            user.setTempphoto(imgPath);
+            userService.update(user);
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+    @PostMapping("userInfoMain")
+    public Object userInfoMain(HttpSession session, @RequestBody User user2){
+        User user = (User)session.getAttribute("user");
+        user.setNickname(user2.getNickname());
+        user.setRealname(user2.getRealname());
+        user.setSex(user2.getSex());
+        user.setAddress(user2.getAddress());
+        user.setDetail(user2.getDetail());
+        userService.update(user);
+        return user;
     }
 }

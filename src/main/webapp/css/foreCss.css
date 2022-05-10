@@ -1772,19 +1772,14 @@ div.userInfo div.mainBody{
     flex-direction: row;
     width: 100%;
 }
-div.userInfo div.mainBody div.mainInfo{
-    width: 100%;
-}
-div.userInfo div.mainBody div.mainInfo table{
-    width: 100%;
-    margin:10px 0;
-    color: #57504b;
-}
-div.userInfo div.mainBody div.mainInfo,div.safeInfo,div.addressInfo table.baseInfo tr>td:first-child{
+div.userInfo div.mainBody div.addressInfo table.baseInfo tr>td:first-child{
     width: 100px;
 }
-div.userInfo div.mainBody div.mainInfo,div.safeInfo,div.addressInfo table.baseInfo td{
+div.userInfo div.mainBody div.mainInfo table.baseInfo td,div.addressInfo table.baseInfo td{
     padding:6px 0;
+}
+div.userInfo div.mainBody div.safeInfo table.safeModify tr td{
+    padding: 10px 0;
 }
 div.userInfo div.mainBody div.mainInfo table.baseInfo tr:nth-child(5) td:nth-child(2) select{
     margin-right:20px
@@ -1808,7 +1803,7 @@ div.userInfo div.mainBody div.addressInfo{
     width: 120px !important;
 }
 .w_100{
-    width: 100px !important;
+    width: 100px;
 }
 div.userInfo .p_l_30{
     padding-left: 30px!important;

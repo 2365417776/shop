@@ -1,9 +1,9 @@
 <div th:fragment="editAddress">
     <style>
-        table.baseInfo tr:first-child td{
+        table.editAddress tr:first-child td{
             padding:10px;
         }
-        table.baseInfo tr:nth-child(2) td:nth-child(2) select{
+        table.editAddress tr:nth-child(2) td:nth-child(2) select{
             margin-right: 5px;
         }
         .m_6{
@@ -19,13 +19,13 @@
                 <h4 class="modal-title" id="exampleModalLabel">修改地址</h4>
             </div>
             <div class="modal-body">
-                <table class="table">
+                <table class="table editAddress">
                     <tr>
                         <th style="border-top:0">收货地址</th>
                     </tr>
                     <tr>
                         <td>
-                            <table class="baseInfo">
+                            <table class="baseInfo editAddress">
                                 <tr>
                                     <td colspan="2" style="color:#f27b1d;font-weight: bold">修改收货地址</td>
                                 </tr>
