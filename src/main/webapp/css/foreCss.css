@@ -1808,3 +1808,35 @@ div.userInfo div.mainBody div.addressInfo{
 div.userInfo .p_l_30{
     padding-left: 30px!important;
 }
+/*用户信息修改*/
+div.editSafeInfo div.mainBody{
+    width: 100%;
+    height: 100px;
+    background: #efefef;
+}
+div.editSafeInfo div.mainBody div.head{
+    max-width: 990px;
+    margin:0 auto;
+    background: #efefef;
+    height: 100%;
+}
+div.editSafeInfo div.bodyMain{
+    max-width: 990px;
+    margin:0 auto;
+    background: white;
+    height: 500px;
+}
+div.editSafeInfo div.bodyMain div.safePhoneVerify{
+    max-width: 800px;
+    background: white;
+    height: 100%;
+}
+div.editSafeInfo div.bodyMain div.safePhoneVerify div.noGetMessage{
+    width: 100%;
+    background: #fdfaec;
+    margin-top:30px;
+}
+div.editSafeInfo div.bodyMain div.safePhoneVerify div.noGetMessage ul{
+    margin:20px 10px;
+    line-height: 25px;
+}

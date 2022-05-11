@@ -17,10 +17,23 @@
     justify-content:center;
     flex-direction: row;
 }
+.content_center_row_between{
+    display:flex;
+    flex-wrap: wrap;
+    justify-content:space-between;
+    flex-direction: row;
+}
 .content_center_row_left{
     display:flex;
     flex-wrap: wrap;
     justify-content:flex-start;
+    flex-direction: row;
+    align-items:center;
+}
+.content_center_row_right{
+    display:flex;
+    flex-wrap: wrap;
+    justify-content:flex-end;
     flex-direction: row;
     align-items:center;
 }

@@ -1,0 +1,34 @@
+<div th:fragment="editBarHead(operation, img)">
+    <style>
+        div.imgBar{
+            position: relative;
+        }
+        div.imgBar div.text_content{
+            position: absolute;
+            left:0;
+            top:0;
+            font-size: 14px;
+            color: #bebebe;
+        }
+        div.imgBar div.verify{
+            left: 2px;
+            top:63px;
+            color:#f40;
+        }
+        div.imgBar div.addPhone{
+            left: 380px;
+            top:63px;
+        }
+        div.imgBar div.finish{
+            left: 768px;
+            top:63px;
+        }
+    </style>
+    <div class="imgBar">
+        <img style="margin:20px 0 50px 0;" width="800px" th:src="@{'img/site/'+${img}+'.png'}" alt="">
+        <div class="text_content verify">验证身份</div>
+        <div class="text_content addPhone" th:if="${img == 'editBar'}" th:text="${operation}"></div>
+        <div class="text_content addPhone" th:if="${img == 'editBar2'}" style="color:#f40" th:text="${operation}"></div>
+        <div class="text_content finish">完成</div>
+    </div>
+</div>

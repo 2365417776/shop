@@ -89,6 +89,20 @@
                                     border:"2px solid #3c763d",
                                     color:"#3c763d"
                                 })
+                                if(this.user.password !== this.user.repeatpassword){
+                                    $("#pwd_1, #pwd_2").css({
+                                        border:"2px solid #a84442",
+                                        color:"#a84442"
+                                    })
+                                    $("div.errorMessage").html("密码不一致，请仔细核对");
+                                    $(".errorMessage").show();
+                                }else{
+                                    $("#pwd_1, #pwd_2").css({
+                                        border:"2px solid #3c763d",
+                                        color:"#3c763d"
+                                    })
+                                    $("div.errorMessage").html("");
+                                }
                             }
                         },
                         'user.repeatpassword':{

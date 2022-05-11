@@ -8,7 +8,7 @@
                         <div class="left_log log_other">
                                 <div class="input-group">
                                     <span class="input-group-addon" id="user"><i class="glyphicon glyphicon-user"></i></span>
-                                    <input v-model="user.name" type="text" class="form-control" placeholder="邮箱或手机号或用户名" aria-describedby="user">
+                                    <input v-model="inputName" type="text" class="form-control" placeholder="邮箱或手机号或用户名" aria-describedby="user">
                                 </div>
                                 <div class="input-group" style="margin:20px 0 10px 0">
                                     <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
@@ -21,7 +21,7 @@
                                 <button @click="login" style="width: 100%;" class="submit layui-btn layui-btn-radius" type="submit">点击登录</button>
 
                             <div class="forget_register">
-                                <div class="forget_pwd"><a href="">忘记密码</a></div>
+                                <div class="forget_pwd"><a href="forgetPassword">忘记密码</a></div>
                                 <div class="register"><a href="register">点击注册</a></div>
                             </div>
                         </div>
@@ -49,7 +49,8 @@
             let dataVue = {
                 url:'forelogin',
                 result:[],
-                user:{name:'', password:''}
+                inputName:'',
+                user:{email:'', phone:'', name:'', password:''}
             };
             $(function(){
                 let vue = new Vue({
@@ -59,7 +60,7 @@
                         $("#errorMessage").hide();
                     },
                     watch:{
-                      'user.name':{
+                      'inputName':{
                           handler:function(){
                               $("#errorMessage").hide();
                           }
@@ -74,8 +75,19 @@
                         login:function(){
                             let errorMessage = $("#errorMessage");
                             errorMessage.hide();
+                            let regex_phone = /^[0-9]{6,11}$/;
+                            let regex_email = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
+                            vue.user.name = this.inputName;
+                            if(regex_phone.test(this.inputName)){
+                                vue.user.name = '';
+                                vue.user.phone = this.inputName;
+                            }
+                            if(regex_email.test(this.inputName)){
+                                vue.user.name = '';
+                                vue.user.email = this.inputName;
+                            }
                             let url = this.url;
-                            if(this.user.name.length === 0){
+                            if(this.inputName.length === 0){
                                 errorMessage.html("请输入用户名");
                                 errorMessage.show();
                                 return

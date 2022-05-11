@@ -1,0 +1,97 @@
+<div th:fragment="addEditEmail(title)">
+    <div class="bodyMain content_center_row">
+        <div class="safePhoneVerify" id="addEditEmail">
+            <div class="content_center_row">
+                <div class="phoneCode">
+                    <div style="font-size: 14px;color:#6c6c6c;margin:15px 0;" class="content_center_row_left">
+                        <i class="fa fa-exclamation-circle" style="color:#3bb3f1;font-size:18px "></i>
+                        <span>&nbsp;&nbsp;请确保您输入的邮箱能正常接收激活邮件，邮箱才能生效。</span>
+                    </div>
+                    <table>
+                        <tr>
+                            <td style="font-size: 14px;color:#6c6c6c;text-align: right">用户名：</td>
+                            <td style="font-size: 12px;color:#6c6c6c;padding:15px 0;">yuan</td>
+                        </tr>
+                        <tr>
+                            <td style="font-size: 14px;color:#6c6c6c;text-align: right">邮箱：</td>
+                            <td style="font-size: 12px;color:#6c6c6c;padding:15px 0;">
+                                <form class="form-inline">
+                                    <div class="form-group">
+                                        <input v-model="email" type="text" class="form-control" placeholder="请输入邮箱地址">
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="font-size: 14px;color:#6c6c6c;text-align: right">验证码：</td>
+                            <td style="padding:15px 0;">
+                                <form class="form-inline">
+                                    <div class="form-group">
+                                        <input v-model="emailVerify" type="text" class="form-control" placeholder="请输入验证码">
+                                    </div>
+                                    <button type="submit" class="btn btn-default">获取邮箱验证码</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td style="padding:15px 0;">
+                                <button th:if="${title == '添加邮箱'}" @click="addEmail" type="button" class="btn btn-info">确定</button>
+                                <button th:if="${title == '修改邮箱'}" @click="editEmail" type="button" class="btn btn-info">确定</button>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="noGetMessage">
+                    <ul>
+                        <li style="font-size: 14px;color:#6c6c6c;font-weight: bold">邮箱验证码收不到帮助：</li>
+                        <li style="font-size: 12px;color:#6c6c6c;">1.您的邮箱验证码可能需要10分钟才能到达您的注册邮箱（这取决于您的邮箱运营商），为避免系统错误请不要重复点击。 </li>
+                        <li style="font-size: 12px;color:#6c6c6c;">2.请检查您的邮箱是否已停止服务或邮件是否流入垃圾箱或邮箱收件箱已满。 </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(function(){
+            let dataVue = {
+                email:'',
+                user:{email:''},
+                emailVerify:''
+            };
+            let vue = new Vue({
+                el:"#addEditEmail",
+                data:dataVue,
+                mounted:function(){
+                    this.load();
+                },
+                methods:{
+                    load(){
+                        axios.get("forecheckLogin").then(function(response){
+                            if (response.data.code === 1) {
+                                location.href = 'login';
+                            }
+                        });
+                    },
+                    addEmail() {
+                        let url = "addEmailSuccess";
+                        this.operaPhone("添加邮箱成功",url)
+                    },
+                    editEmail(){
+                        let url = "editEmailSuccess";
+                        this.operaPhone("修改邮箱成功", url);
+                    },
+                    operaPhone(title, url){
+                        if(!checkEmpty(this.email, "邮箱"))
+                            return;
+                        vue.user.email = this.email
+                        axios.post("userInfoMain", this.user).then(function(response){
+                            alert(title)
+                            location.href = url;
+                        })
+                    }
+                }
+            })
+        })
+    </script>
+</div>

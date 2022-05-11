@@ -3,7 +3,7 @@
         <ul id="phone_register">
             <li>
                 <i class="fa fa-mobile"></i>
-                <input type="text" placeholder="输入手机号" class="w_100">
+                <input v-model="user.phone" type="text" id="phone" placeholder="输入手机号" class="w_100">
             </li>
             <li style="overflow: hidden">
                 <i class="fa fa-code-fork"></i>
@@ -12,24 +12,214 @@
             </li>
             <li>
                 <i class="fa fa-lock"></i>
-                <input type="text" placeholder="输入密码" id="pwd_11" class="w_100">
+                <input v-model="user.password" type="password" placeholder="输入密码" id="pwd_11" class="w_100 inputPwd">
+                <span @mousedown="openEye" @mouseup="closeEye" class="eye glyphicon glyphicon-eye-close" style="position:absolute;right:10px;top:17px;"></span>
+
             </li>
             <li>
                 <i class="fa fa-lock"></i>
-                <input type="text" placeholder="确认密码" id="pwd_22" class="w_100">
+                <input v-model="user.repeatpassword" type="password" placeholder="确认密码" id="pwd_22" class="w_100 inputPwd">
+                <span @mousedown="openEye" @mouseup="closeEye" class="eye glyphicon glyphicon-eye-close" style="position:absolute;right:10px;top:17px;"></span>
             </li>
             <li>
             <li>
                 <div class="checkbox">
                     <label>
-                        <input type="checkbox"> 同意服务协议
+                        <input type="checkbox" id="protocol"> 同意服务协议
                     </label>
                 </div>
-                <div style="text-align: center;font-size:14px;color:red">errorMessage</div>
+            <div class="errorMessage2" style="text-align:center;color:#843534;font-weight: 700;background: #f1dddd;padding:4px;border-radius: 5px"></div>
             </li>
             <li id="phone_inset">
-                <button class="submit layui-btn layui-btn-radius" type="submit">点击注册</button>
+                <button @click="register" class="submit layui-btn layui-btn-radius" type="submit">点击注册</button>
             </li>
         </ul>
     </div>
+    <script>
+        $(function(){
+            let dataVue = {
+                url:"foreregister",
+                result:[],
+                user:{name:'', phone:'', password:'', repeatpassword:''}
+            };
+            $(function(){
+                let vue = new Vue({
+                    el:"#phone_register",
+                    data:dataVue,
+                    mounted:function(){
+                        this.getResult();
+                    },
+                    watch:{
+                        'user.phone':{
+                            handler(newVal, oldVal){
+                                $(".errorMessage2").hide();
+                                this.getResult();
+                                if(this.user.name === ''){
+                                    $("#phone").css({
+                                        border:"1px solid black",
+                                        color:"black"
+                                    })
+                                    $("div.errorMessage2").html("");
+                                    return
+                                }
+                                $("#phone").css({
+                                    border:"2px solid #3c763d",
+                                    color:"#3c763d"
+                                })
+                            }
+                        },
+                        'user.password':{
+                            handler(newVal, oldVal){
+                                $(".errorMessage2").hide();
+                                if(this.result.code === 1)
+                                    return
+                                if(this.user.password === this.user.repeatpassword && this.user.password === ''){
+                                    $("#pwd_11, #pwd_22").css({
+                                        border:"1px solid black",
+                                        color:"black"
+                                    })
+                                    $("div.errorMessage2").html("");
+                                    return
+                                }
+                                $("#pwd_11").css({
+                                    border:"2px solid #3c763d",
+                                    color:"#3c763d"
+                                })
+                                if(this.user.password !== this.user.repeatpassword){
+                                    $("#pwd_11, #pwd_22").css({
+                                        border:"2px solid #a84442",
+                                        color:"#a84442"
+                                    })
+                                    $("div.errorMessage2").html("密码不一致，请仔细核对");
+                                    $(".errorMessage2").show();
+                                }else{
+                                    $("#pwd_11, #pwd_22").css({
+                                        border:"2px solid #3c763d",
+                                        color:"#3c763d"
+                                    })
+                                    $("div.errorMessage2").html("");
+                                }
+                            }
+                        },
+                        'user.repeatpassword':{
+                            handler(newVal, oldVal){
+                                $(".errorMessage2").hide();
+                                if(this.result.code === 1)
+                                    return
+                                if(this.user.password === this.user.repeatpassword && this.user.repeatpassword === ''){
+                                    $("#pwd_11, #pwd_22").css({
+                                        border:"1px solid black",
+                                        color:"black"
+                                    })
+                                    $("div.errorMessage2").html("");
+                                    return
+                                }
+                                $("#pwd_22").css({
+                                    border:"2px solid #3c763d",
+                                    color:"#3c763d"
+                                })
+                                if(this.user.password !== this.user.repeatpassword){
+                                    $("#pwd_11, #pwd_22").css({
+                                        border:"2px solid #a84442",
+                                        color:"#a84442"
+                                    })
+                                    $("div.errorMessage2").html("密码不一致，请仔细核对");
+                                    $(".errorMessage2").show();
+                                }else{
+                                    $("#pwd_11, #pwd_22").css({
+                                        border:"2px solid #3c763d",
+                                        color:"#3c763d"
+                                    })
+                                    $("div.errorMessage2").html("");
+                                }
+                            }
+                        }
+                    },
+                    methods:{
+                        getResult:function(){
+                            $(".errorMessage2").hide();
+                            let url = "testPhone";
+                            axios.post(url, this.user).then(function(response){
+                                vue.result = response.data;
+                                if(response.data.code === 0){
+                                    vue.user.name = vue.result.data.name;
+                                }
+                                if(response.data.code === 1){
+                                    $("#phone").css({
+                                        border:"2px solid #a84442",
+                                        color:"#a84442"
+                                    })
+                                }
+                                $("div.errorMessage2").html(response.data.message);
+                                if(response.data.message !== null)
+                                    $(".errorMessage2").show();
+                            })
+                        },
+                        register:function(){
+                            $(".errorMessage2").hide();
+                            let checkStatus = $("#protocol").prop("checked")
+                            let url = this.url;
+                            let errorMessage2 = $("div.errorMessage2");
+                            if(this.result.code === 1){
+                                errorMessage2.html("用户名已经被占用");
+                                $(".errorMessage2").show();
+                                return
+                            }
+                            if(this.user.phone.length === 0){
+                                errorMessage2.html("请输入用户名");
+                                $(".errorMessage2").show();
+                                return
+                            }
+                            if(this.user.password.length === 0){
+                                errorMessage2.html("请输入密码");
+                                $(".errorMessage2").show();
+                                return
+                            }
+                            if(this.user.repeatpassword.length === 0){
+                                errorMessage2.html("请输入确认密码");
+                                $(".errorMessage2").show();
+                                return
+                            }
+                            if(this.user.password !== this.user.repeatpassword){
+                                errorMessage2.html("密码不一致，请仔细核对");
+                                $(".errorMessage2").show();
+                                return
+                            }
+                            if(!checkStatus){
+                                errorMessage2.html("请同意协议");
+                                $(".errorMessage2").show();
+                                return
+                            }
+                            errorMessage2.html("");
+                            if(errorMessage2.html() === ""){
+                                axios.post(url, vue.user).then(function(){
+                                    location.href = "registerSuccess";
+                                })
+                            }
+                        },
+                        openEye:function(){
+                            let eye = $(".eye");
+                            let inputPwd = $(".inputPwd");
+                            $.each(eye, function(index, value){
+                                if($(value).attr("class") === 'eye glyphicon glyphicon-eye-close'){
+                                    $(value).attr("class", "eye glyphicon glyphicon-eye-open")
+                                    inputPwd.attr("type", "text")
+                                }
+                            })
+                        },
+                        closeEye:function(){
+                            let eye = $(".eye");
+                            let inputPwd = $(".inputPwd");
+                            $.each(eye, function(index, value){
+                                if($(value).attr("class") === 'eye glyphicon glyphicon-eye-open'){
+                                    $(value).attr("class", "eye glyphicon glyphicon-eye-close")
+                                    inputPwd.attr("type", "password")
+                                }
+                            })
+                        }
+                    }
+                })
+            })
+        })
+    </script>
 </div>

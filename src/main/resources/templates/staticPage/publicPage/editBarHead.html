@@ -1,0 +1,42 @@
+<div th:fragment="editBarHead(title)">
+    <div class="mainBody">
+        <div class="head content_center_row_between" id="safeInfoHead">
+            <div class="head_content content_center_row_left">
+                <img @click="retHome" width="60px" th:src="@{img/fix_bar/商城.svg}" alt="">
+                <span style="font-size: 26px;margin-left:20px" th:text="${title}"></span>
+            </div>
+            <div class="head_content content_center_row_right">
+                <div th:if="${session.user != null}">
+                    <a href="userInfo" th:text="${'您好,' + session.user.name + '&nbsp;&nbsp;'}"></a>|
+                </div>
+                <div th:if="${session.user != null}">
+                    <a @click="exit">&nbsp;&nbsp;退出&nbsp;&nbsp;</a>|
+                </div>
+                <a @click="retHome">&nbsp;&nbsp;我的商城</a>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(function(){
+            let dataVue = {
+
+            };
+            let vue = new Vue({
+                el:"#safeInfoHead",
+                data:dataVue,
+                mounted:function(){},
+                methods:{
+                    exit(){
+                        let url = "forelogout";
+                        axios.get(url).then(function(){
+                            location.href = "home";
+                        });
+                    },
+                    retHome(){
+                        location.href = "home";
+                    }
+                }
+            })
+        })
+    </script>
+</div>

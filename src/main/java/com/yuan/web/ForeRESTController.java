@@ -7,7 +7,9 @@ import com.yuan.service.*;
 import com.yuan.tools.CodeUtil;
 import com.yuan.tools.ImageUtil;
 import com.yuan.tools.Result;
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.math.RandomUtils;
+import org.aspectj.bridge.IMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -77,12 +79,53 @@ public class ForeRESTController {
         user.setPassword(password);
         return Result.success();
     }
+    @PostMapping("/testPhone")
+    public Object testPhone(@RequestBody User user){
+        String phone = user.getPhone();
+        String password = user.getPassword();
+        phone = HtmlUtils.htmlEscape(phone);
+        String name = RandomStringUtils.random(5);
+        user.setPhone(phone);
+        user.setName(name);
+        boolean exist = userService.isExist2(phone);
+        if(exist){
+            String message = "用户名已经被占用";
+            return Result.fail(message);
+        }
+        user.setPassword(password);
+        return Result.success(user);
+    }
+    @PostMapping("editPasswordNoLog")
+    public Object editPasswordNoLog(@RequestBody User user){
+        String name = HtmlUtils.htmlEscape(user.getName());
+        String phone = user.getPhone();
+        String password = user.getPassword();
+        User user1 = new User();
+        if(name != null && !name.equals("")){
+            user1 = userService.getByName(name);
+        }
+        if(phone != null && !phone.equals("")){
+            user1 = userService.getByPhone(phone);
+        }
+        if(user1 == null){
+            return Result.fail("用户不存在");
+        }
+        if(password != null && !password.equals("")){
+            user1.setPassword(password);
+        }
+        userService.update(user1);
+        return Result.success(user1);
+    }
     @PostMapping("/foreregister")
     public Object register(@RequestBody User user){
         String name = user.getName();
+        String phone = user.getPhone();
         String password = user.getPassword();
         name = HtmlUtils.htmlEscape(name);
-        user.setName(name);
+        if(name != null)
+            user.setName(name);
+        if(phone != null)
+            user.setPhone(phone);
         boolean exist = userService.isExist(name);
         if(exist){
             String message = "用户名已经被占用";
@@ -95,19 +138,42 @@ public class ForeRESTController {
     @PostMapping("/forelogin")
     public Object login(@RequestBody User userParam, HttpSession session){
         String name = userParam.getName();
+        String phone = userParam.getPhone();
+        String email = userParam.getEmail();
         name = HtmlUtils.htmlEscape(name);
 
-        User user = userService.get(name, userParam.getPassword());
-        if(user == null){
-            String message = "账号或密码错误";
-            return Result.fail(message);
+        if(name != null && !name.equals("")){
+            User user = userService.get(name, userParam.getPassword());
+            if(user == null){
+                String message = "账号或密码错误";
+                return Result.fail(message);
+            }else{
+                session.setAttribute("user", user);
+                return Result.success();
+            }
         }
-        else{
-            session.setAttribute("user", user);
-            return Result.success();
+        if(phone != null && !phone.equals("")){
+            User user = userService.getByPhone(phone, userParam.getPassword());
+            if(user == null){
+                String message = "账号或密码错误";
+                return Result.fail(message);
+            }else{
+                session.setAttribute("user", user);
+                return Result.success();
+            }
         }
+        if(email != null && !email.equals("")){
+            User user = userService.getByEmail(email, userParam.getPassword());
+            if(user == null){
+                String message = "账号或密码错误";
+                return Result.fail(message);
+            }else{
+                session.setAttribute("user", user);
+                return Result.success();
+            }
+        }
+        return null;
     }
-
     @GetMapping("/foreproduct/{pid}")
     public Object product(@PathVariable("pid") int pid){
         Product product = productService.get(pid);
@@ -501,30 +567,12 @@ public class ForeRESTController {
     }
 
     @PostMapping("userInfoImage")
-    public void userInfoImage(HttpSession session,HttpServletRequest request)throws Exception{
-        User user = (User)session.getAttribute("user");
-        File userFolder = new File(request.getServletContext().getRealPath("img/userImage"));
-        File file = new File(userFolder, user.getName()+".jpg");
-        File file2 = new File(userFolder, user.getName()+"_temp.jpg");
-        if(!file.getParentFile().exists())
-            file.getParentFile().mkdirs();
-        try{
-            BufferedImage tempImg = ImageIO.read(file2);
-            ImageIO.write(tempImg, "jpg", file);
-            String imgPath = "img/" + userFolder.getName() + "/" + file.getName();
-            user.setPhoto(imgPath);
-            userService.update(user);
-        }catch (IOException e){
-            e.printStackTrace();
-        }
-    }
-    @PostMapping("userInfoTempImage")
-    public void userInfoTempImage(HttpSession session,HttpServletRequest request, MultipartFile image)throws Exception{
+    public void userInfoImage(HttpSession session,HttpServletRequest request, MultipartFile image)throws Exception{
         if(image == null)
             return;
         User user = (User)session.getAttribute("user");
         File userFolder = new File(request.getServletContext().getRealPath("img/userImage"));
-        File file = new File(userFolder, user.getName()+"_temp.jpg");
+        File file = new File(userFolder, user.getName()+".jpg");
         if(!file.getParentFile().exists())
             file.getParentFile().mkdirs();
         try{
@@ -532,7 +580,7 @@ public class ForeRESTController {
             BufferedImage img = ImageUtil.change2jpg(file);
             ImageIO.write(img, "jpg", file);
             String imgPath = "img/" + userFolder.getName() + "/" + file.getName();
-            user.setTempphoto(imgPath);
+            user.setPhoto(imgPath);
             userService.update(user);
         }catch (IOException e){
             e.printStackTrace();
@@ -541,11 +589,24 @@ public class ForeRESTController {
     @PostMapping("userInfoMain")
     public Object userInfoMain(HttpSession session, @RequestBody User user2){
         User user = (User)session.getAttribute("user");
-        user.setNickname(user2.getNickname());
-        user.setRealname(user2.getRealname());
-        user.setSex(user2.getSex());
-        user.setAddress(user2.getAddress());
-        user.setDetail(user2.getDetail());
+        if(user2.getName() != null && !user2.getName().equals(""))
+            user.setName(user2.getName());
+        if(user2.getPassword() != null && !user2.getPassword().equals(""))
+            user.setPassword(user2.getPassword());
+        if(user2.getPhone() != null && !user2.getPhone().equals(""))
+            user.setPhone(user2.getPhone());
+        if(user2.getEmail() != null && !user2.getEmail().equals(""))
+            user.setEmail(user2.getEmail());
+        if(user2.getSex() != null && !user2.getSex().equals(""))
+            user.setSex(user2.getSex());
+        if(user2.getNickname() != null && !user2.getNickname().equals(""))
+            user.setNickname(user2.getNickname());
+        if(user2.getRealname() != null && !user2.getRealname().equals(""))
+            user.setRealname(user2.getRealname());
+        if(user2.getAddress() != null && !user2.getAddress().equals(""))
+            user.setAddress(user2.getAddress());
+        if(user2.getDetail() != null && !user2.getDetail().equals(""))
+            user.setDetail(user2.getDetail());
         userService.update(user);
         return user;
     }

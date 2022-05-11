@@ -27,8 +27,18 @@ public class UserService {
     public User get(String name, String password){
         return userDAO.getByNameAndPassword(name, password);
     }
+    public User getByPhone(String phone, String password){
+        return userDAO.getByPhoneAndPassword(phone, password);
+    }
+    public User getByEmail(String email, String password){
+        return userDAO.getByEmailAndPassword(email, password);
+    }
     public boolean isExist(String name){
         User user = getByName(name);
+        return user != null;
+    }
+    public boolean isExist2(String phone){
+        User user = getByPhone(phone);
         return user != null;
     }
     public void add(User user){
@@ -39,5 +49,9 @@ public class UserService {
     }
     public void update(User user){
         userDAO.save(user);
+    }
+
+    public User getByPhone(String phone){
+        return userDAO.getByPhone(phone);
     }
 }

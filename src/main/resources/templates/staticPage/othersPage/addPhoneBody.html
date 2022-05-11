@@ -1,0 +1,90 @@
+<div th:fragment="addPhone(title)">
+    <div class="content_center_row" id="addPhone">
+        <div class="phoneCode">
+            <div style="font-size: 14px;color:#6c6c6c;margin:15px 0;" class="content_center_row_left">
+                <i class="fa fa-exclamation-circle" style="color:#3bb3f1;font-size:18px "></i>
+                <span>&nbsp;&nbsp;我们不会泄露您的手机信息</span>
+            </div>
+            <table>
+                <tr>
+                    <td style="font-size: 14px;color:#6c6c6c;text-align: right">手机号码：</td>
+                    <td style="font-size: 12px;color:#6c6c6c;padding:15px 0;">
+                        <form class="form-inline">
+                            <div class="form-group">
+                                <input v-model="phone" type="text" class="form-control" placeholder="请输入手机号">
+                            </div>
+                        </form>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-size: 14px;color:#6c6c6c;text-align: right">验证码：</td>
+                    <td style="padding:15px 0;">
+                        <form class="form-inline">
+                            <div class="form-group">
+                                <input v-model="phoneVerify" type="password" class="form-control" placeholder="请输入验证码">
+                            </div>
+                            <button type="submit" class="btn btn-default">获取短信验证</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td style="padding:15px 0;">
+                        <button th:if="${title == '添加手机'}" @click="addPhone" type="button" class="btn btn-info">确定</button>
+                        <button th:if="${title == '修改手机'}" @click="editPhone" type="button" class="btn btn-info">确定</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="noGetMessage">
+            <ul>
+                <li style="font-size: 14px;color:#6c6c6c;font-weight: bold">没收到短信验证码？</li>
+                <li style="font-size: 12px;color:#6c6c6c;">1、网络通讯异常可能会造成短信丢失，请重新获取或稍后再试。</li>
+                <li style="font-size: 12px;color:#6c6c6c;">2、请核实手机是否已欠费停机，或者屏蔽了系统短信。</li>
+                <li style="font-size: 12px;color:#6c6c6c;">3、您也可以尝试将SIM卡移动到另一部手机，然后重试。</li>
+            </ul>
+        </div>
+    </div>
+    <script>
+        $(function(){
+            let dataVue = {
+                phone:'',
+                user:{phone:''},
+                phoneVerify:''
+            };
+            let vue = new Vue({
+                el:"#addPhone",
+                data:dataVue,
+                mounted:function(){
+                    this.load();
+                },
+                methods:{
+                    load(){
+                        axios.get("forecheckLogin").then(function(response){
+                            if (response.data.code === 1) {
+                                location.href = 'login';
+                            }
+                        });
+                    },
+                    addPhone() {
+                        let url = "addPhoneSuccess";
+                        this.operaPhone("添加手机成功",url)
+                    },
+                    editPhone(){
+                        let url = "editPhoneSuccess";
+                        this.operaPhone("修改手机成功", url);
+                    },
+                    operaPhone(title, url){
+                        if(!checkEmpty(this.phone, "手机号"))
+                            return;
+                        vue.user.phone = this.phone
+                        axios.post("userInfoMain", this.user).then(function(response){
+                            alert(title)
+                            location.href = url;
+                        })
+                    }
+                }
+            })
+        })
+    </script>
+</div>

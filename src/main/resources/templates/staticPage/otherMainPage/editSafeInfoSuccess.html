@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:include="include/lib::html"></head>
+<body>
+<div class="editSafeInfo">
+    <div th:replace="staticPage/publicPage/editBarHead::editBarHead(${title})"></div>
+    <div th:replace="staticPage/publicPage/successEdit::successEidt(${title}+'成功')"></div>
+</div>
+</body>
+</html>

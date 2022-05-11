@@ -7,7 +7,7 @@
                     <img th:src="@{''+${session.user.photo}}" alt="" height="50px">
                 </div>
                 <div class="title_left headName">
-                    <span>用户</span><br>
+                    <span>{{user.nickname}}</span><br>
                     <span style="font-weight: normal;font-size: 13px">账户</span>
                 </div>
                 <div style="clear: both"></div>
@@ -35,9 +35,9 @@
                                 <td class="w_100">当前头像</td>
                                 <td class="content_center_row_left">
                                     <div style="width: 60px;height: 60px;overflow: hidden">
-                                        <img height="60px" th:src="@{''+${session.user.tempphoto}}" alt="">
+                                        <img height="60px" :src="path" alt="">
                                     </div>
-                                    <input style="padding-left:20px" id="changeImg" type="file" accept="image/*" @change="getFile($event)">
+                                    <input multiple="multiple" style="padding-left:20px" id="changeImg" type="file" accept="image/*" @change="getFile($event)">
                                 </td>
                             </tr>
                             <tr>
@@ -67,7 +67,9 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td><span class="redColor">*&nbsp;</span>地址信息</td>
+                                <td>
+                                    <span class="redColor">*&nbsp;</span>地址信息
+                                </td>
                                 <td class="content_center_row_left">
                                     <select v-model="address.province" class="form-control w_120">
                                         <option value="">选择省</option>
@@ -86,6 +88,10 @@
                                         <option v-for="t in towns">{{t.name}}</option>
                                     </select>
                                 </td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>默认地址: {{user.address}} {{user.detail}}</td>
                             </tr>
                             <tr>
                                 <td>详细地址</td>
@@ -117,19 +123,23 @@
                             </tr>
                             <tr>
                                 <td>绑定手机</td>
-                                <td>{{user.phone | phoneHideFilter}}</td>
-                                <td class="p_l_30"><a href="">修改或添加手机号</a></td>
+                                <td v-if="(user.phone != '') && (user.phone != null)">{{user.phone | phoneHideFilter}}</td>
+                                <td v-if="(user.phone == '') || (user.phone == null)">您尚未设置手机号</td>
+                                <td v-if="(user.phone != '') && (user.phone != null)" class="p_l_30"><a @click="editPhone">修改手机号</a></td>
+                                <td v-if="(user.phone == '') || (user.phone == null)" class="p_l_30"><a @click="addPhone">添加手机号</a></td>
                             </tr>
                             <tr>
                                 <td>绑定邮箱</td>
-                                <td>{{user.email}}</td>
-                                <td class="p_l_30"><a href="">修改或添加邮箱</a></td>
+                                <td v-if="(user.email != '') && (user.email != null)">{{user.email}}</td>
+                                <td v-if="(user.email == '') || (user.email == null)">您尚未设置登录邮箱</td>
+                                <td v-if="(user.email != '') && (user.email != null)" class="p_l_30"><a @click="editEmail">修改邮箱</a></td>
+                                <td v-if="(user.email == '') || (user.email == null)" class="p_l_30"><a @click="addEmail">添加邮箱</a></td>
                             </tr>
                             <tr>
                                 <td>登录密码</td>
                                 <td>**********</td>
                                 <td class="p_l_30">
-                                    <a href="">修改登录密码</a>
+                                    <a @click="editPassword">修改登录密码</a>
                                 </td>
                             </tr>
                         </table>
@@ -202,10 +212,10 @@
                 addresses:'',
                 bean:[],
                 img:null,
-                tempphoto:null,
                 imgPath:'',
                 user:'',
-                userInfo:{photo:'',tempphoto:'',nickname:'',realname:'', sex:'', address:null, detail:null}
+                path:'',
+                userInfo:{photo:'',nickname:'',realname:'', sex:'', address:null, detail:''}
             };
             $(function(){
                 let vue = new Vue({
@@ -217,6 +227,27 @@
                             if(response.data.code === 0){
                                 let result = response.data;
                                 vue.user = result.data;
+                                console.log(vue.user)
+                                vue.path = vue.user.photo;
+                                vue.userInfo.nickname = vue.user.nickname;
+                                vue.userInfo.realname = vue.user.realname;
+                                vue.detail = vue.user.detail;
+                                let sex = $(".sex");
+                                let sexResult = vue.user.sex;
+                                $.each(sex, function(index, value){
+                                    value = $(value);
+                                    if(index === 0 && sexResult === '男')
+                                        value.prop("checked", "checked")
+                                    else if(index === 1 && sexResult === '女')
+                                        value.prop("checked", "checked")
+                                    else if(index === 2 && sexResult === '保密')
+                                        value.prop("checked", "checked")
+                                });
+                                let addressPlit = vue.user.address.split(" ")
+                                vue.address.province = addressPlit[0];
+                                vue.address.city = addressPlit[1];
+                                vue.address.county = addressPlit[2];
+                                vue.address.town = addressPlit[3];
                             }else{
                                 location.href = "home";
                             }
@@ -332,6 +363,12 @@
                         myInfo(){
                             this.hideFunc();
                             $(".mainInfo").show();
+                            let addressPlit = vue.user.address.split(" ")
+                            console.log(addressPlit);
+                            vue.address.province = addressPlit[0];
+                            vue.address.city = addressPlit[1];
+                            vue.address.county = addressPlit[2];
+                            vue.address.town = addressPlit[3];
                         },
                         safeInfo(){
                             this.hideFunc();
@@ -340,15 +377,17 @@
                         addressInfo(){
                             this.hideFunc();
                             $(".addressInfo").show();
+                            vue.address.province = "";
+                            vue.address.city = "";
+                            vue.address.county = "";
+                            vue.address.town = "";
+                            vue.detail = "";
                         },
                         getFile(event){
-                            vue.tempphoto = event.target.files[0];
-                            let url = "userInfoTempImage";
-                            let formData = new FormData();
-                            formData.append("image", this.tempphoto)
-                            axios.post(url,formData).then(function(response){
-                                location.reload();
-                            })
+                            vue.img = event.target.files[0];
+                            let fileObj = document.getElementById("changeImg").files[0];
+                            const url = window.URL.createObjectURL(fileObj)
+                            vue.path = url;
                         },
                         userInfoSave(){
                             if(!checkEmpty(this.userInfo.nickname, "昵称"))
@@ -377,8 +416,9 @@
                             vue.userInfo.detail = this.detail;
                             let url = "userInfoImage";
                             let userInfo = this.userInfo;
-                            vue.img = this.tempphoto;
-                            axios.post(url).then(function(response){
+                            let formData = new FormData();
+                            formData.append("image", this.img)
+                            axios.post(url, formData).then(function(response){
 
                             })
                             axios.post("userInfoMain", userInfo).then(function(response){
@@ -386,6 +426,21 @@
                                 alert("保存成功");
                                 location.reload();
                             })
+                        },
+                        addPhone(){
+                            location.href = "addPhone";
+                        },
+                        editPhone(){
+                            location.href = "editPhone";
+                        },
+                        addEmail(){
+                            location.href = "addEmail";
+                        },
+                        editEmail(){
+                            location.href = "editEmail";
+                        },
+                        editPassword(){
+                            location.href = "editPassword";
                         }
                     }
                 })

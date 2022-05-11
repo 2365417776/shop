@@ -24,15 +24,6 @@ public class User {
     private String realname;
     private String address;
     private String detail;
-    private String tempphoto;
-
-    public String getTempphoto() {
-        return tempphoto;
-    }
-
-    public void setTempphoto(String tempphoto) {
-        this.tempphoto = tempphoto;
-    }
 
     public String getSex() {
         return sex;
