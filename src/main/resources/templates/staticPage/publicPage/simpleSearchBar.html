@@ -45,8 +45,8 @@
     </style>
     <div class="simpleSearch" id="simpleSearchBar">
         <div class="simpleSearchDiv pull-right">
-            <input type="text" name="keyword" placeholder="点击搜索">
-            <button type="button" class="searchButton">搜索框</button>
+            <input v-model="keywordInput" type="text" name="keyword" placeholder="点击搜索">
+            <button @click="searchResult" type="button" class="searchButton">搜索框</button>
             <div class="searchBelow">
                 <span th:if="${status.index >= 5 && status.index <= 8}" th:each="p,status :${application.categories_below_search}">
                     <a th:href="@{'category?cid='+${p.id}}" th:text="${p.name}"></a>
@@ -56,4 +56,22 @@
         </div>
         <div style="clear: both"></div>
     </div>
+    <script>
+        $(function(){
+            let dataVue = {
+                url:"search",
+                keywordInput:""
+            };
+            let vue = new Vue({
+                el:"#simpleSearchBar",
+                data:dataVue,
+                methods:{
+                    searchResult(){
+                        let url = this.url + "?keyword=" + this.keywordInput;
+                        location.href = url;
+                    }
+                }
+            })
+        })
+    </script>
 </div>

@@ -1,10 +1,10 @@
 <div th:fragment="homepageCategoryProducts">
     <div class="homepageCategoryProducts" id="homepageCategoryProducts">
-        <div class="eachHomepageCategoryProducts" v-for="c in categories">
-            <div class="left-mark"></div>
-            <span class="categoryTitle">{{c.name}}</span>
-            <br>
-            <div class="productItem" v-for="p,index in c.products" v-if="index < 5">
+        <div class="eachHomepageCategoryProducts">
+<!--            <div class="left-mark"></div>-->
+<!--            <span class="categoryTitle">{{c.name}}</span>-->
+<!--            <br>-->
+            <div class="productItem" v-for="p,index in products">
                 <a :href="'product?pid='+p.id"><img :src="'img/productSingle_middle/'+p.firstProductImage.id+'.jpg'" alt="" width="100px"></a>
                 <a :href="'product?pid='+p.id"><span class="productItemDesc">[热销] {{p.name | subStringFilter(0, 20)}}</span></a>
                 <span class="productPrice">{{p.promotePrice | formatMoneyFilter}}</span>
@@ -12,5 +12,8 @@
             <div style="clear:both"></div>
         </div>
         <img th:src="@{img/site/end.png}" class="endpng" id="endpng">
+        <div class="content_center_row">
+            <div th:replace="staticPage/publicPage/navigator::navigator"></div>
+        </div>
     </div>
 </div>

@@ -41,6 +41,9 @@ public class CategoryService {
    public Category getOne(int id){
       return categoryDAO.getOne(id);
    }
+   public List<Category> getAll(){
+      return categoryDAO.findAll();
+   }
 
    public void update(Category bean){
       categoryDAO.save(bean);

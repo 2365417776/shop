@@ -12,7 +12,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class ProductService {
@@ -50,6 +52,22 @@ public class ProductService {
         Page<Product> page = productDAO.findByCategory(category, pageable);
         return new PageNavigator<>(page, navigatePages);
     }
+//    以分页方式列出所有产品
+    public PageNavigator<Product> list(int start, int size, int navigatePages){
+        Sort sort = new Sort(Sort.Direction.DESC, "id");
+        Pageable pageable = new PageRequest(start, size ,sort);
+        Page<Product> productAll = null;
+        productAll = productDAO.findAll(pageable);
+        PageNavigator<Product> page = new PageNavigator<>(productAll,navigatePages);
+        Set<Product> sets = new HashSet<>();
+        assert false;
+        sets.addAll(page.getContent());
+        List<Product> lists = new ArrayList<>();
+        lists.addAll(sets);
+        fillProduct(lists);
+        page.setContent(lists);
+        return page;
+    }
 //    为分类填充产品
     public void fill(List<Category> categorys){
         for (Category category : categorys){
@@ -60,6 +78,10 @@ public class ProductService {
         List<Product> products = listByCategory(category);
         productImageService.setFirstProductImages(products);
         category.setProducts(products);
+    }
+    //为每一个产品填充图片
+    public void fillProduct(List<Product> products){
+        productImageService.setFirstProductImages(products);
     }
     public void fillByRow(List<Category> categories){
         int productNumberEachRow = 8;

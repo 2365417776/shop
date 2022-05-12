@@ -6,10 +6,10 @@ import com.yuan.pojo.*;
 import com.yuan.service.*;
 import com.yuan.tools.CodeUtil;
 import com.yuan.tools.ImageUtil;
+import com.yuan.tools.PageNavigator;
 import com.yuan.tools.Result;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.math.RandomUtils;
-import org.aspectj.bridge.IMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -64,6 +64,12 @@ public class ForeRESTController {
         productService.fillByRow(cs);
         categoryService.removeCategoryFromProduct(cs);
         return cs;
+    }
+    @GetMapping("homePageList")
+    public Object homePageList(@RequestParam(value = "start", defaultValue = "0")int start, @RequestParam(value = "size", defaultValue = "15")int size)throws Exception{
+        start = start<0? 0:start;
+        PageNavigator<Product> page = productService.list(start, size, 5);
+        return page;
     }
     @PostMapping("/testUsername")
     public Object testUsername(@RequestBody User user){
@@ -236,7 +242,7 @@ public class ForeRESTController {
         return c;
     }
     @PostMapping("foresearch")
-    public Object search(String keyword){
+    public Object search(@RequestParam String keyword){
         if(keyword == null)
             keyword = "";
         List<Product> ps = productService.search(keyword, 0, 20);

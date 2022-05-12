@@ -59,8 +59,8 @@
             <img class="logo" th:src="@{img/fix_bar/商城.svg}" alt="">
         </a>
         <div class="searchDiv">
-            <input type="text" placeholder="请点击搜索">
-            <button class="searchButton" type="submit">搜索</button>
+            <input v-model="keywordInput" type="text" placeholder="请点击搜索">
+            <button @click="searchResult" class="searchButton" type="submit">搜索</button>
             <div class="searchBelow">
                 <span th:each="c,status:${application.categories_below_search}"
                       th:if="${status.index >= 5 && status.index <= 8}">
@@ -74,7 +74,20 @@
 <div style="height: 50px"></div>
     <script>
         $(function(){
-
+            let dataVue = {
+                url:"search",
+                keywordInput:""
+            };
+            let vue = new Vue({
+                el:"#searchMain",
+                data:dataVue,
+                methods:{
+                    searchResult(){
+                        let url = this.url + "?keyword=" + this.keywordInput;
+                        location.href = url;
+                    }
+                }
+            })
         })
     </script>
 </div>

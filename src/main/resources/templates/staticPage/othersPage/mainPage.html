@@ -5,7 +5,6 @@
         //分类栏与后台
         $(function(){
             // 分类栏js
-            $(function(){})
             function showProductsAsideCategorys(cid){
                 $("div.eachCategory[cid="+cid+"]").css("background-color","white");
                 $("div.eachCategory[cid="+cid+"] a").css("color","#87cefa");
@@ -43,14 +42,15 @@
             }
             let vueData = {
                 url:"forehome",
-                categories:[]
+                categories:[],
+                pagination:{},
+                products:[]
             };
             $(function(){
                 let vue = new Vue({
                     el:"#categoryWithCarousel",
                     data:vueData,
                     mounted:function(){
-                        // linkDefaultActions();
                         this.load();
                     },
                     methods:{
@@ -82,11 +82,27 @@
                     },
                     methods:{
                         load:function(){
-                            let url = this.url;
+                            let url = "homePageList";
                             axios.get(url).then(function(response){
-                                vue.categories = response.data;
+                                vue.products = response.data.content;
+                                vue.pagination = response.data;
+                                console.log(vue.products);
                             })
-                        }
+                        },
+                        list: function (start) {
+                            let url = "homePageList" + "?start=" + start;
+                            // 发送Ajax请求
+                            axios.get(url).then(function (response) {
+                                vue.pagination = response.data;
+                                vue.products = response.data.content;
+                            })
+                        },
+                        jump: function (page) {
+                            jump(page, vue);
+                        },
+                        jumpByNumber: function (start) {
+                            jumpByNumber(start, vue);
+                        },
                     }
                 })
             })
